@@ -26,6 +26,10 @@ export function InteractOverlay({
     onClose();
   }
 
+  function handleBack() {
+    setLineIndex((i) => Math.max(0, i - 1));
+  }
+
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-4 sm:items-center" onClick={onClose}>
       <div onClick={(e) => e.stopPropagation()} className="w-full max-w-lg">
@@ -48,9 +52,14 @@ export function InteractOverlay({
                   </p>
                 )}
               </div>
-              <Button onClick={handleAdvance} className="self-end">
-                {lineIndex < result.lines.length - 1 ? "Next" : "Close"}
-              </Button>
+              <div className="flex items-center justify-end gap-2">
+                {lineIndex > 0 && (
+                  <Button onClick={handleBack} variant="secondary">
+                    Back
+                  </Button>
+                )}
+                <Button onClick={handleAdvance}>{lineIndex < result.lines.length - 1 ? "Next" : "Close"}</Button>
+              </div>
             </div>
           )}
         </Panel>

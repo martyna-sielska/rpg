@@ -4,19 +4,22 @@ import Image from "next/image";
 import { Interactable } from "@/components/world/Interactable";
 import type { Interactable as InteractableType } from "@/lib/game/types";
 
-// Hand-placed against assets/locations/castle_archive.png (cropped from the
-// castle's library/archive room) — covers The King's Archive (Quest 12) and
+// Hand-placed against assets/locations/castle_archive.png (a landscape
+// (844x560, same ~1.5 aspect as every other location background) crop of
+// castleinside.png spanning the dining hall on the left and the full
+// library/archive on the right) — covers The King's Archive (Quest 12) and
 // The Betrayal (Quest 17). No day/night tint here — an indoor archive stays
 // lit regardless of the hour.
 const INTERACTABLE_POSITIONS: Record<string, { x: number; y: number }> = {
-  castle_archive_doors: { x: 50, y: 82 },
-  castle_old_records: { x: 22, y: 32 },
-  castle_missing_pages: { x: 56, y: 24 },
-  castle_frost_reference: { x: 30, y: 58 },
-  castle_volcanic_reference: { x: 64, y: 58 },
-  castle_hidden_documents_1: { x: 40, y: 42 },
-  castle_hidden_documents_2: { x: 70, y: 44 },
-  castle_antagonist_plan: { x: 52, y: 18 },
+  castle_archive_doors: { x: 15, y: 15 },
+  castle_old_records: { x: 55, y: 15 },
+  castle_missing_pages: { x: 90, y: 15 },
+  castle_frost_reference: { x: 65, y: 65 },
+  castle_volcanic_reference: { x: 85, y: 65 },
+  castle_hidden_documents_1: { x: 25, y: 70 },
+  castle_hidden_documents_2: { x: 45, y: 78 },
+  castle_antagonist_plan: { x: 62, y: 35 },
+  castle_confrontation: { x: 12, y: 40 },
 };
 
 export function CastleScene({

@@ -9,6 +9,13 @@ import { Panel } from "@/components/ui/Panel";
 import { Button } from "@/components/ui/Button";
 import { LevelUpModal } from "@/components/level-up/LevelUpModal";
 
+// Falls back to a single placeholder line if a dialogue row is ever missing
+// server-side (talk_to_npc returns an empty array rather than an error) —
+// keeps the overlay from ever rendering a blank window.
+function lines(result: TalkResult): string[] {
+  return result.lines.length > 0 ? result.lines : ["..."];
+}
+
 export function DialogueOverlay({
   npcId,
   portraitImage,
@@ -44,10 +51,14 @@ export function DialogueOverlay({
     onClose();
   }
 
+  function handleBack() {
+    setLineIndex((i) => Math.max(0, i - 1));
+  }
+
   function handleAdvance() {
     if (!result) return;
 
-    if (lineIndex < result.lines.length - 1) {
+    if (lineIndex < lines(result).length - 1) {
       setLineIndex((i) => i + 1);
       return;
     }
@@ -116,16 +127,23 @@ export function DialogueOverlay({
                 </div>
                 <div>
                   <p className="font-pixel text-sm text-gold">{result.npcName}</p>
-                  <p className="mt-2 text-sm leading-relaxed text-parchment">{result.lines[lineIndex]}</p>
+                  <p className="mt-2 text-sm leading-relaxed text-parchment">{lines(result)[lineIndex]}</p>
                 </div>
               </div>
-              <Button onClick={handleAdvance} disabled={isPending} className="self-end">
-                {isPending
-                  ? "..."
-                  : lineIndex < result.lines.length - 1
-                    ? "Next"
-                    : result.responseLabel}
-              </Button>
+              <div className="flex items-center justify-end gap-2">
+                {lineIndex > 0 && (
+                  <Button onClick={handleBack} disabled={isPending} variant="secondary">
+                    Back
+                  </Button>
+                )}
+                <Button onClick={handleAdvance} disabled={isPending}>
+                  {isPending
+                    ? "..."
+                    : lineIndex < lines(result).length - 1
+                      ? "Next"
+                      : result.responseLabel}
+                </Button>
+              </div>
             </div>
           )}
         </Panel>

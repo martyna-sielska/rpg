@@ -1449,3 +1449,29 @@ insert into public.npc_dialogues (id, npc_id, quest_id, state, lines, response_l
 on conflict (id) do update set
   npc_id = excluded.npc_id, quest_id = excluded.quest_id, state = excluded.state,
   lines = excluded.lines, response_label = excluded.response_label;
+
+-- =========================================================
+-- Bugfix: three quests (one pre-existing, two from the Veil arc) had no
+-- 'quest_active' dialogue row. talk_to_npc() falls back to an empty lines
+-- array when no row matches (npc_id, quest_id, state), which DialogueOverlay
+-- then rendered as a blank window — the "empty window" players hit when
+-- talking to the quest giver again mid-quest, before its objectives are
+-- all done. Filling in the missing state for every quest closes the gap.
+-- =========================================================
+
+insert into public.npc_dialogues (id, npc_id, quest_id, state, lines, response_label) values
+  ('elira_what_lies_beneath_active', 'elira', 'what_lies_beneath', 'quest_active',
+   array[
+     'Still turning it over. Come back in a bit.'
+   ], 'I''ll wait.'),
+  ('elira_three_seals_active', 'elira', 'three_seals', 'quest_active',
+   array[
+     'Go on, take another look at the inscriptions. I''ll be here.'
+   ], 'Still looking.'),
+  ('elira_the_choice_active', 'elira', 'the_choice', 'quest_active',
+   array[
+     'Take whatever time you need. This isn''t a decision to rush.'
+   ], 'Still thinking.')
+on conflict (id) do update set
+  npc_id = excluded.npc_id, quest_id = excluded.quest_id, state = excluded.state,
+  lines = excluded.lines, response_label = excluded.response_label;
