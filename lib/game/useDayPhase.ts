@@ -1,23 +1,27 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { getDayPhase, type DayPhase } from "@/lib/game/time";
 
-// Starts null rather than calling getDayPhase() immediately: that call reads
-// the real clock, and the server's "now" (at SSR render time) and the
-// client's "now" (at hydration, a moment later) can straddle a 5-minute
-// phase boundary — the server-rendered markup and the client's first render
-// would then disagree, which is a hydration error. Staying null through the
-// first render keeps server and client output identical; the real phase is
-// only computed client-side, after mount, in the effect below.
+function subscribe(callback: () => void): () => void {
+  const id = setInterval(callback, 15000);
+  return () => clearInterval(id);
+}
+
+function getSnapshot(): DayPhase {
+  return getDayPhase();
+}
+
+// The server and the client's first render can't agree on the real clock
+// (SSR render time vs. hydration time can straddle a 5-minute phase
+// boundary), so useSyncExternalStore's server snapshot stays fixed at "day"
+// — identical on both sides, avoiding a hydration mismatch. The real,
+// live-updating phase only takes over once the client subscribes below.
+function getServerSnapshot(): DayPhase {
+  return "day";
+}
+
+/** Re-checks the shared day/night clock periodically so a scene left open updates on its own. */
 export function useDayPhase(): DayPhase {
-  const [phase, setPhase] = useState<DayPhase | null>(null);
-
-  useEffect(() => {
-    setPhase(getDayPhase());
-    const i = setInterval(() => setPhase(getDayPhase()), 15000);
-    return () => clearInterval(i);
-  }, []);
-
-  return phase ?? "day";
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }

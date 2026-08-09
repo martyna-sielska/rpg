@@ -130,10 +130,15 @@ export function DialogueOverlay({
                   <p className="mt-2 text-sm leading-relaxed text-parchment">{lines(result)[lineIndex]}</p>
                 </div>
               </div>
-              <div className="flex items-center justify-end gap-2">
-                <Button onClick={handleBack} disabled={isPending || lineIndex === 0} variant="secondary">
+              <div className="flex items-center justify-between gap-2">
+                <button
+                  type="button"
+                  onClick={handleBack}
+                  disabled={isPending || lineIndex === 0}
+                  className="text-sm font-semibold text-parchment-dark underline-offset-2 hover:text-parchment hover:underline disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:no-underline"
+                >
                   Back
-                </Button>
+                </button>
                 <Button onClick={handleAdvance} disabled={isPending}>
                   {isPending
                     ? "..."
