@@ -147,6 +147,7 @@ IMAGES = {
     "kael": (f"{ROOT}/assets/kael.png", f"{ROOT}/public/assets/heroes/kael.png"),
     "liora": (f"{ROOT}/assets/liora.png", f"{ROOT}/public/assets/heroes/liora.png"),
     "rowan": (f"{ROOT}/assets/rowan.png", f"{ROOT}/public/assets/heroes/rowan.png"),
+    "alden": (f"{ROOT}/assets/alden.png", f"{ROOT}/public/assets/npcs/scholar_alden.png"),
     "dragon": (
         f"{ROOT}/public/assets/pets/dragon.png",
         f"{ROOT}/public/assets/pets/dragon.png",
