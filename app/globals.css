@@ -1,0 +1,188 @@
+@import "tailwindcss";
+
+:root {
+  --background: #241a12;
+  --foreground: #f4e6c8;
+
+  --color-parchment: #f4e6c8;
+  --color-parchment-dark: #e3cfa0;
+  --color-wood-darkest: #1c130c;
+  --color-wood-dark: #3a2716;
+  --color-wood: #55381f;
+  --color-wood-light: #7a5230;
+  --color-gold: #e8b923;
+  --color-gold-light: #f6d564;
+  --color-hp: #d1483f;
+  --color-xp: #7c6ff0;
+  --color-ink: #2a1c10;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-parchment: var(--color-parchment);
+  --color-parchment-dark: var(--color-parchment-dark);
+  --color-wood-darkest: var(--color-wood-darkest);
+  --color-wood-dark: var(--color-wood-dark);
+  --color-wood: var(--color-wood);
+  --color-wood-light: var(--color-wood-light);
+  --color-gold: var(--color-gold);
+  --color-gold-light: var(--color-gold-light);
+  --color-hp: var(--color-hp);
+  --color-xp: var(--color-xp);
+  --color-ink: var(--color-ink);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-pixel: var(--font-pixelify);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+@keyframes level-up-pop {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-level-up {
+  animation: level-up-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes hit-flash {
+  0% {
+    filter: brightness(1);
+    transform: translateX(0);
+  }
+  30% {
+    filter: brightness(2.4) saturate(0.4);
+    transform: translateX(-6px);
+  }
+  60% {
+    transform: translateX(4px);
+  }
+  100% {
+    filter: brightness(1);
+    transform: translateX(0);
+  }
+}
+
+.animate-hit-flash {
+  animation: hit-flash 0.35s ease-out;
+}
+
+@keyframes float-up {
+  0% {
+    transform: translate(-50%, 0);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -48px);
+    opacity: 0;
+  }
+}
+
+.animate-float-up {
+  animation: float-up 1.1s ease-out forwards;
+}
+
+@keyframes telegraph-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(232, 185, 35, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(232, 185, 35, 0);
+  }
+}
+
+.animate-telegraph {
+  animation: telegraph-pulse 0.6s ease-out infinite;
+}
+
+/* Notable-creature idle motion, matched to what each one is — rooted
+   things sway, ethereal things float, squat things pulse, erratic things
+   jitter. Applied to a wrapper div so it composes with hover/hit-flash
+   transforms on inner elements instead of fighting them for `transform`. */
+@keyframes idle-sway {
+  0%,
+  100% {
+    transform: rotate(-2.5deg);
+  }
+  50% {
+    transform: rotate(2.5deg);
+  }
+}
+
+.animate-idle-sway {
+  transform-origin: 50% 100%;
+  animation: idle-sway 3.6s ease-in-out infinite;
+}
+
+@keyframes idle-float {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.82;
+  }
+  50% {
+    transform: translateY(-10px);
+    opacity: 1;
+  }
+}
+
+.animate-idle-float {
+  animation: idle-float 3s ease-in-out infinite;
+}
+
+@keyframes idle-pulse {
+  0%,
+  100% {
+    transform: scale(1, 1);
+  }
+  50% {
+    transform: scale(1.08, 0.88);
+  }
+}
+
+.animate-idle-pulse {
+  transform-origin: 50% 100%;
+  animation: idle-pulse 2.2s ease-in-out infinite;
+}
+
+@keyframes idle-jitter {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  20% {
+    transform: translate(-2px, 1px);
+  }
+  40% {
+    transform: translate(2px, -1px);
+  }
+  60% {
+    transform: translate(-1px, 2px);
+  }
+  80% {
+    transform: translate(1px, -2px);
+  }
+}
+
+.animate-idle-jitter {
+  animation: idle-jitter 0.6s linear infinite;
+}
