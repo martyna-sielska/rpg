@@ -16,6 +16,7 @@ const LOCATION_ROUTE: Record<string, string> = {
   volcano: "/volcano",
   magic_tower: "/magic-tower",
   ancient_ruins: "/ancient-ruins",
+  hollow: "/hollow",
 };
 
 // Clickable regions hand-placed directly over the matching art in

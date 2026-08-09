@@ -147,6 +147,7 @@ export interface Database {
           is_main: boolean;
           sort_order: number;
           prerequisite_quest_id: string | null;
+          unlocks_location_id: string | null;
         };
         Insert: Partial<Database["public"]["Tables"]["quests"]["Row"]> & { id: string; title: string; giver_npc_id: string; location_id: string };
         Update: Partial<Database["public"]["Tables"]["quests"]["Row"]>;

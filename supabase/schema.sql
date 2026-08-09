@@ -139,7 +139,11 @@ create table public.quests (
   -- talk_to_npc) instead of exactly one, and lets a quest be gated on a
   -- different NPC's quest (e.g. Dorran's fetch quest requiring Elira's
   -- gate quest to be done first).
-  prerequisite_quest_id text references public.quests (id)
+  prerequisite_quest_id text references public.quests (id),
+  -- Unlocks this location for the player the moment the quest is offered
+  -- (see talk_to_npc) — used when a later quest's own objectives require
+  -- traveling somewhere not reachable at signup (see patch-007).
+  unlocks_location_id text references public.locations (id)
 );
 
 -- Deliberately no 'return_to_npc' objective row for the final turn-in step —
@@ -596,6 +600,7 @@ declare
   v_state text;
   v_pq_status text;
   v_dialogue public.npc_dialogues;
+  v_unlocks_location_id text;
 begin
   if v_player_id is null then
     raise exception 'Not authenticated';
@@ -666,6 +671,15 @@ begin
       from public.quest_objectives qo
       where qo.quest_id = v_quest_id
       on conflict (player_id, objective_id) do nothing;
+
+    select q.unlocks_location_id into v_unlocks_location_id
+      from public.quests q where q.id = v_quest_id;
+
+    if v_unlocks_location_id is not null then
+      insert into public.player_locations (player_id, location_id, unlocked)
+        values (v_player_id, v_unlocks_location_id, true)
+        on conflict (player_id, location_id) do update set unlocked = true, updated_at = now();
+    end if;
   end if;
 
   select * into v_dialogue from public.npc_dialogues nd
