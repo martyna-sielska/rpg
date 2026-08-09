@@ -53,11 +53,9 @@ export function InteractOverlay({
                 )}
               </div>
               <div className="flex items-center justify-end gap-2">
-                {lineIndex > 0 && (
-                  <Button onClick={handleBack} variant="secondary">
-                    Back
-                  </Button>
-                )}
+                <Button onClick={handleBack} disabled={lineIndex === 0} variant="secondary">
+                  Back
+                </Button>
                 <Button onClick={handleAdvance}>{lineIndex < result.lines.length - 1 ? "Next" : "Close"}</Button>
               </div>
             </div>

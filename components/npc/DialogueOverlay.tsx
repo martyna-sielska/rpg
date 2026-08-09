@@ -131,11 +131,9 @@ export function DialogueOverlay({
                 </div>
               </div>
               <div className="flex items-center justify-end gap-2">
-                {lineIndex > 0 && (
-                  <Button onClick={handleBack} disabled={isPending} variant="secondary">
-                    Back
-                  </Button>
-                )}
+                <Button onClick={handleBack} disabled={isPending || lineIndex === 0} variant="secondary">
+                  Back
+                </Button>
                 <Button onClick={handleAdvance} disabled={isPending}>
                   {isPending
                     ? "..."
