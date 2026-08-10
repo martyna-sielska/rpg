@@ -22,6 +22,7 @@ export default async function MountainsPage() {
     { data: monsters },
     { data: bossState },
     { data: interactions },
+    { data: secondSealQuest },
     { data: equipment },
     { data: potionRow },
   ] = await Promise.all([
@@ -32,6 +33,7 @@ export default async function MountainsPage() {
     supabase.from("monsters").select("*").eq("location_id", "mountains").eq("tier", "boss"),
     supabase.from("player_boss_state").select("*").eq("player_id", player.id),
     supabase.from("player_interactions").select("interactable_id").eq("player_id", player.id).eq("interactable_id", "mountains_puzzle_rune_2"),
+    supabase.from("player_quests").select("status").eq("player_id", player.id).eq("quest_id", "the_second_seal").maybeSingle(),
     supabase.from("player_equipment").select("*").eq("player_id", player.id).maybeSingle(),
     supabase.from("player_inventory").select("quantity").eq("player_id", player.id).eq("item_id", "healing_potion").maybeSingle(),
   ]);
@@ -45,6 +47,7 @@ export default async function MountainsPage() {
   const boss = monsters?.[0] ?? null;
   const bossDefeated = bossState?.some((s) => s.monster_id === boss?.id && s.defeated) ?? false;
   const puzzleSolved = (interactions?.length ?? 0) > 0;
+  const questActive = secondSealQuest?.status === "active" || secondSealQuest?.status === "ready_to_turn_in";
   const itemIcons = Object.fromEntries((items ?? []).map((item) => [item.id, item.icon_image]));
 
   return (
@@ -56,6 +59,7 @@ export default async function MountainsPage() {
       boss={boss}
       bossDefeated={bossDefeated}
       puzzleSolved={puzzleSolved}
+      questActive={questActive}
       player={player}
       avatarImage={avatarById(player.avatar_id).image}
       weaponBonus={weaponBonus}

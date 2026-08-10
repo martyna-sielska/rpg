@@ -37,6 +37,7 @@ export function VolcanoScene({
   boss,
   bossDefeated,
   chamberReached,
+  questActive,
   player,
   avatarImage,
   weaponBonus,
@@ -49,6 +50,15 @@ export function VolcanoScene({
   boss: Monster | null;
   bossDefeated: boolean;
   chamberReached: boolean;
+  // Whether "The Third Seal" is currently the player's active quest — the
+  // boss only appears once it is. Without this, a player who reaches the
+  // seal chamber while still on an earlier volcano quest (Volcano unlocks
+  // at "The Ancient Forge", well before "The Third Seal" becomes active)
+  // could kill the boss before its quest exists to record the kill against
+  // — defeat_monster only progresses objectives of the player's currently
+  // *active* quests, and a defeated boss's hotspot never comes back, so
+  // that objective would be permanently unwinnable.
+  questActive: boolean;
   player: Player;
   avatarImage: string;
   weaponBonus: number;
@@ -83,7 +93,7 @@ export function VolcanoScene({
         return <Interactable key={obj.id} id={obj.id} name={obj.name} mapX={pos.x} mapY={pos.y} />;
       })}
 
-      {boss && !bossDefeated && chamberReached && (
+      {boss && !bossDefeated && chamberReached && questActive && (
         <MonsterHotspot
           id={boss.id}
           name={boss.name}
@@ -95,7 +105,7 @@ export function VolcanoScene({
         />
       )}
 
-      {boss && !bossDefeated && !chamberReached && (
+      {boss && !bossDefeated && (!chamberReached || !questActive) && (
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2">
           <Panel className="px-4 py-2 text-center text-xs text-parchment-dark">
             Heat rolls up from deeper in the volcano. Whatever guards the seal chamber is still out of reach.

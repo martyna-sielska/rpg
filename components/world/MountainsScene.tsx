@@ -36,6 +36,7 @@ export function MountainsScene({
   boss,
   bossDefeated,
   puzzleSolved,
+  questActive,
   player,
   avatarImage,
   weaponBonus,
@@ -48,6 +49,9 @@ export function MountainsScene({
   boss: Monster | null;
   bossDefeated: boolean;
   puzzleSolved: boolean;
+  // Whether "The Second Seal" is currently the player's active quest — see
+  // the matching note in VolcanoScene for why this gate exists.
+  questActive: boolean;
   player: Player;
   avatarImage: string;
   weaponBonus: number;
@@ -82,7 +86,7 @@ export function MountainsScene({
         return <Interactable key={obj.id} id={obj.id} name={obj.name} mapX={pos.x} mapY={pos.y} />;
       })}
 
-      {boss && !bossDefeated && puzzleSolved && (
+      {boss && !bossDefeated && puzzleSolved && questActive && (
         <MonsterHotspot
           id={boss.id}
           name={boss.name}
@@ -94,7 +98,7 @@ export function MountainsScene({
         />
       )}
 
-      {boss && !bossDefeated && !puzzleSolved && (
+      {boss && !bossDefeated && (!puzzleSolved || !questActive) && (
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2">
           <Panel className="px-4 py-2 text-center text-xs text-parchment-dark">
             The chamber&apos;s inner door stays shut. Something in this room still wants activating.
