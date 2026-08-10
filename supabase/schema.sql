@@ -854,9 +854,15 @@ begin
     end loop;
 
     if v_monster.tier in ('miniboss', 'boss') then
-      update public.player_boss_state
-        set defeated = true, defeated_at = now()
-        where player_id = v_player_id and monster_id = p_monster_id;
+      -- Upsert, not a plain update: handle_new_user only seeds a
+      -- player_boss_state row for bosses that existed at signup time, so a
+      -- boss added later (e.g. frost_guardian/magma_warden) has no row yet
+      -- for players who registered before it was seeded — a plain update
+      -- would silently affect zero rows and "defeated" would never stick.
+      insert into public.player_boss_state (player_id, monster_id, defeated, defeated_at)
+        values (v_player_id, p_monster_id, true, now())
+        on conflict (player_id, monster_id) do update
+          set defeated = true, defeated_at = now();
     end if;
 
     perform public.record_quest_event('defeat_monster', p_monster_id);
