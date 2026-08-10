@@ -44,7 +44,7 @@ export function GameHud({ player }: { player: Player }) {
   const xpPercent = required > 0 ? Math.min(100, Math.max(0, (xp / required) * 100)) : 0;
 
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex items-end justify-between gap-3 p-3 sm:p-4">
+    <div className="pointer-events-none fixed inset-x-0 top-0 z-40 flex items-start justify-between gap-3 p-3 sm:p-4">
       <div className="pointer-events-auto relative flex items-center gap-3 rounded-xl border-4 border-wood-dark bg-wood/95 p-2 pr-4 shadow-[0_8px_24px_rgba(0,0,0,0.5)]">
         <div className="relative h-16 w-14 shrink-0 overflow-hidden rounded-md border-2 border-wood-darkest bg-wood-darkest/60">
           <Image
