@@ -5,8 +5,9 @@ import Image from "next/image";
 import { NpcSprite } from "@/components/npc/NpcSprite";
 import { DialogueOverlay } from "@/components/npc/DialogueOverlay";
 import { DayNightOverlay } from "@/components/world/DayNightOverlay";
+import { Interactable } from "@/components/world/Interactable";
 import { useDayPhase } from "@/lib/game/useDayPhase";
-import type { Npc } from "@/lib/game/types";
+import type { Interactable as InteractableType, Npc } from "@/lib/game/types";
 
 // Hand-placed against assets/village.png (fountain square, bakery top-left,
 // blacksmith forge top-right, tavern far right) — same "hardcoded hotspot"
@@ -17,11 +18,31 @@ const NPC_POSITIONS: Record<string, { x: number; y: number }> = {
   mira: { x: 38, y: 30 },
 };
 
+// Points of interest around the village added from Quest 18 onward (the
+// three-seals altar / passage at Elira's, plus the post-Hollow side-quest
+// beats near each NPC's usual spot).
+const INTERACTABLE_POSITIONS: Record<string, { x: number; y: number }> = {
+  village_three_seals_altar: { x: 58, y: 55 },
+  village_open_passage: { x: 64, y: 58 },
+  village_the_choice: { x: 30, y: 45 },
+  village_dorran_forge_memory: { x: 78, y: 28 },
+  village_elira_journal: { x: 62, y: 68 },
+  village_mira_heirloom: { x: 44, y: 34 },
+};
+
 // Dorran and Mira keep shopkeeper hours; Elira (the quest giver) is always
 // reachable so nothing here can block quest progress.
 const NIGHT_CLOSED_NPCS = new Set(["dorran", "mira"]);
 
-export function VillageScene({ backgroundImage, npcs }: { backgroundImage: string; npcs: Npc[] }) {
+export function VillageScene({
+  backgroundImage,
+  npcs,
+  interactables,
+}: {
+  backgroundImage: string;
+  npcs: Npc[];
+  interactables: InteractableType[];
+}) {
   const [activeNpcId, setActiveNpcId] = useState<string | null>(null);
   const [closedMessage, setClosedMessage] = useState<string | null>(null);
   const phase = useDayPhase();
@@ -59,6 +80,12 @@ export function VillageScene({ backgroundImage, npcs }: { backgroundImage: strin
             />
           </div>
         );
+      })}
+
+      {interactables.map((obj) => {
+        const pos = INTERACTABLE_POSITIONS[obj.id];
+        if (!pos) return null;
+        return <Interactable key={obj.id} id={obj.id} name={obj.name} mapX={pos.x} mapY={pos.y} />;
       })}
 
       {closedMessage && (
