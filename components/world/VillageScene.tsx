@@ -85,7 +85,16 @@ export function VillageScene({
       {interactables.map((obj) => {
         const pos = INTERACTABLE_POSITIONS[obj.id];
         if (!pos) return null;
-        return <Interactable key={obj.id} id={obj.id} name={obj.name} mapX={pos.x} mapY={pos.y} />;
+        return (
+          <Interactable
+            key={obj.id}
+            id={obj.id}
+            name={obj.name}
+            mapX={pos.x}
+            mapY={pos.y}
+            navigateTo={obj.id === "village_open_passage" ? "/hollow" : undefined}
+          />
+        );
       })}
 
       {closedMessage && (

@@ -5,7 +5,20 @@ import { useRouter } from "next/navigation";
 import { interactWithObject, type InteractResult } from "@/lib/actions/interactables";
 import { InteractOverlay } from "@/components/world/InteractOverlay";
 
-export function Interactable({ id, name, mapX, mapY }: { id: string; name: string; mapX: number; mapY: number }) {
+export function Interactable({
+  id,
+  name,
+  mapX,
+  mapY,
+  navigateTo,
+}: {
+  id: string;
+  name: string;
+  mapX: number;
+  mapY: number;
+  /** If set, navigate here once the player closes the overlay after a successful interaction (e.g. a portal/passage). */
+  navigateTo?: string;
+}) {
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
   const [result, setResult] = useState<InteractResult | null>(null);
@@ -24,9 +37,14 @@ export function Interactable({ id, name, mapX, mapY }: { id: string; name: strin
   }
 
   function handleClose() {
+    const shouldNavigate = navigateTo && result && !error;
     setResult(null);
     setError(null);
-    router.refresh();
+    if (shouldNavigate) {
+      router.push(navigateTo);
+    } else {
+      router.refresh();
+    }
   }
 
   return (
