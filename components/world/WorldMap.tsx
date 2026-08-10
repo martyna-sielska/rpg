@@ -16,8 +16,15 @@ const LOCATION_ROUTE: Record<string, string> = {
   volcano: "/volcano",
   magic_tower: "/magic-tower",
   ancient_ruins: "/ancient-ruins",
-  hollow: "/hollow",
+  // Deliberately no "hollow" route here: the Hollow is never a World Map
+  // destination, even once unlocked (needed so travel_to_location succeeds
+  // when the passage sends you there) — the only way in is the temporary
+  // passage interactable at the village altar.
 };
+
+// Locations that never appear on the map at all, regardless of unlocked
+// state — not even as a locked pin.
+const HIDDEN_FROM_MAP = new Set(["hollow"]);
 
 // Clickable regions hand-placed directly over the matching art in
 // assets/map2.png (percent of the 1536x1024 image) — the leftmost cottage
@@ -55,6 +62,7 @@ export function WorldMap({
       <div className="absolute inset-0 bg-black/10" />
 
       {locations.map((location) => {
+        if (HIDDEN_FROM_MAP.has(location.id)) return null;
         const unlocked = playerLocations.some((pl) => pl.location_id === location.id && pl.unlocked);
         const route = LOCATION_ROUTE[location.id];
         const rect = HOTSPOT_RECTS[location.id];
