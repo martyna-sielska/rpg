@@ -16,7 +16,7 @@ import type { GatheringNode, Interactable as InteractableType, Monster, Player }
 const GATHER_POSITIONS: Record<string, { x: number; y: number }> = {
   forest_crystal_cluster: { x: 13, y: 24 },
   forest_glowing_mushrooms: { x: 9, y: 70 },
-  forest_deadwood: { x: 45, y: 40 },
+  forest_deadwood: { x: 44, y: 48 },
   forest_iron_vein: { x: 60, y: 30 },
 };
 
