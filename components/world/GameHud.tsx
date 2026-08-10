@@ -45,13 +45,13 @@ export function GameHud({ player }: { player: Player }) {
 
   return (
     <div className="pointer-events-none fixed inset-x-0 top-0 z-40 flex items-start justify-between gap-3 p-3 sm:p-4">
-      <div className="pointer-events-auto relative flex items-center gap-3 rounded-xl border-4 border-wood-dark bg-wood/95 p-2 pr-4 shadow-[0_8px_24px_rgba(0,0,0,0.5)]">
-        <div className="relative h-16 w-14 shrink-0 overflow-hidden rounded-md border-2 border-wood-darkest bg-wood-darkest/60">
+      <div className="pointer-events-auto relative flex items-center gap-2 rounded-xl border-4 border-wood-dark bg-wood/95 p-1.5 pr-3 shadow-[0_8px_24px_rgba(0,0,0,0.5)]">
+        <div className="relative h-11 w-10 shrink-0 overflow-hidden rounded-md border-2 border-wood-darkest bg-wood-darkest/60">
           <Image
             src={avatar.image}
             alt={avatar.name}
             fill
-            sizes="56px"
+            sizes="40px"
             unoptimized
             className="object-cover"
             style={{
@@ -61,19 +61,19 @@ export function GameHud({ player }: { player: Player }) {
             }}
           />
         </div>
-        <div className="flex w-32 flex-col gap-1 sm:w-40">
-          <div className="flex items-center justify-between text-sm font-semibold text-parchment">
+        <div className="flex w-24 flex-col gap-1 sm:w-28">
+          <div className="flex items-center justify-between text-[11px] font-semibold text-parchment">
             <span className="truncate">{player.username}</span>
             <span className="shrink-0 text-parchment-dark">Lv {player.level}</span>
           </div>
-          <div className="h-2 w-full overflow-hidden rounded-full border border-wood-darkest bg-wood-darkest/80">
+          <div className="h-1.5 w-full overflow-hidden rounded-full border border-wood-darkest bg-wood-darkest/80">
             <div className="h-full rounded-full bg-hp transition-all duration-500" style={{ width: `${hpPercent}%` }} />
           </div>
-          <div className="h-1.5 w-full overflow-hidden rounded-full border border-wood-darkest bg-wood-darkest/80">
+          <div className="h-1 w-full overflow-hidden rounded-full border border-wood-darkest bg-wood-darkest/80">
             <div className="h-full rounded-full bg-xp transition-all duration-500" style={{ width: `${xpPercent}%` }} />
           </div>
         </div>
-        <div className="hidden items-center gap-1 text-xs font-semibold text-gold sm:flex">
+        <div className="hidden items-center gap-1 text-[11px] font-semibold text-gold sm:flex">
           <span aria-hidden>🪙</span>
           <span>{player.gold}</span>
         </div>
