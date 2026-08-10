@@ -17,6 +17,7 @@ export default async function MountainsPage() {
   const [
     { data: location },
     { data: gatheringNodes },
+    { data: items },
     { data: interactables },
     { data: monsters },
     { data: bossState },
@@ -26,6 +27,7 @@ export default async function MountainsPage() {
   ] = await Promise.all([
     supabase.from("locations").select("*").eq("id", "mountains").single(),
     supabase.from("gathering_nodes").select("*").eq("location_id", "mountains"),
+    supabase.from("items").select("id, icon_image"),
     supabase.from("interactables").select("*").eq("location_id", "mountains"),
     supabase.from("monsters").select("*").eq("location_id", "mountains").eq("tier", "boss"),
     supabase.from("player_boss_state").select("*").eq("player_id", player.id),
@@ -43,11 +45,13 @@ export default async function MountainsPage() {
   const boss = monsters?.[0] ?? null;
   const bossDefeated = bossState?.some((s) => s.monster_id === boss?.id && s.defeated) ?? false;
   const puzzleSolved = (interactions?.length ?? 0) > 0;
+  const itemIcons = Object.fromEntries((items ?? []).map((item) => [item.id, item.icon_image]));
 
   return (
     <MountainsScene
       backgroundImage={location?.background_image ?? "/assets/locations/mountains.png"}
       gatheringNodes={gatheringNodes ?? []}
+      itemIcons={itemIcons}
       interactables={interactables ?? []}
       boss={boss}
       bossDefeated={bossDefeated}

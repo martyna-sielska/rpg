@@ -38,6 +38,7 @@ const INTERACTABLE_POSITIONS: Record<string, { x: number; y: number }> = {
 export function ForestScene({
   backgroundImage,
   gatheringNodes,
+  itemIcons,
   monsters,
   interactables,
   player,
@@ -47,6 +48,7 @@ export function ForestScene({
 }: {
   backgroundImage: string;
   gatheringNodes: GatheringNode[];
+  itemIcons: Record<string, string>;
   monsters: Monster[];
   interactables: InteractableType[];
   player: Player;
@@ -65,7 +67,16 @@ export function ForestScene({
       {gatheringNodes.map((node) => {
         const pos = GATHER_POSITIONS[node.id];
         if (!pos) return null;
-        return <GatherNode key={node.id} nodeId={node.id} name={node.name} mapX={pos.x} mapY={pos.y} />;
+        return (
+          <GatherNode
+            key={node.id}
+            nodeId={node.id}
+            name={node.name}
+            iconImage={itemIcons[node.item_id] ?? "/assets/items/crystal_shard.png"}
+            mapX={pos.x}
+            mapY={pos.y}
+          />
+        );
       })}
 
       {monsters.map((monster) => {

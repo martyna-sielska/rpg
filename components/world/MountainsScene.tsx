@@ -31,6 +31,7 @@ const BOSS_POSITION = { x: 88, y: 49 };
 export function MountainsScene({
   backgroundImage,
   gatheringNodes,
+  itemIcons,
   interactables,
   boss,
   bossDefeated,
@@ -42,6 +43,7 @@ export function MountainsScene({
 }: {
   backgroundImage: string;
   gatheringNodes: GatheringNode[];
+  itemIcons: Record<string, string>;
   interactables: InteractableType[];
   boss: Monster | null;
   bossDefeated: boolean;
@@ -61,7 +63,16 @@ export function MountainsScene({
       {gatheringNodes.map((node) => {
         const pos = GATHER_POSITIONS[node.id];
         if (!pos) return null;
-        return <GatherNode key={node.id} nodeId={node.id} name={node.name} mapX={pos.x} mapY={pos.y} />;
+        return (
+          <GatherNode
+            key={node.id}
+            nodeId={node.id}
+            name={node.name}
+            iconImage={itemIcons[node.item_id] ?? "/assets/items/crystal_shard.png"}
+            mapX={pos.x}
+            mapY={pos.y}
+          />
+        );
       })}
 
       {interactables.map((obj) => {

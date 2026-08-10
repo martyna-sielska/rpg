@@ -32,6 +32,7 @@ const BOSS_POSITION = { x: 82, y: 14 };
 export function VolcanoScene({
   backgroundImage,
   gatheringNodes,
+  itemIcons,
   interactables,
   boss,
   bossDefeated,
@@ -43,6 +44,7 @@ export function VolcanoScene({
 }: {
   backgroundImage: string;
   gatheringNodes: GatheringNode[];
+  itemIcons: Record<string, string>;
   interactables: InteractableType[];
   boss: Monster | null;
   bossDefeated: boolean;
@@ -62,7 +64,16 @@ export function VolcanoScene({
       {gatheringNodes.map((node) => {
         const pos = GATHER_POSITIONS[node.id];
         if (!pos) return null;
-        return <GatherNode key={node.id} nodeId={node.id} name={node.name} mapX={pos.x} mapY={pos.y} />;
+        return (
+          <GatherNode
+            key={node.id}
+            nodeId={node.id}
+            name={node.name}
+            iconImage={itemIcons[node.item_id] ?? "/assets/items/crystal_shard.png"}
+            mapX={pos.x}
+            mapY={pos.y}
+          />
+        );
       })}
 
       {interactables.map((obj) => {
