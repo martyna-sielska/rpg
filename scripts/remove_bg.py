@@ -164,6 +164,10 @@ IMAGES = {
         f"{ROOT}/public/assets/monsters/wild_ember.png",
         f"{ROOT}/public/assets/monsters/wild_ember.png",
     ),
+    "frost_guardian": (
+        f"{ROOT}/public/assets/monsters/frost_guardian.png",
+        f"{ROOT}/public/assets/monsters/frost_guardian.png",
+    ),
     "bramble_warden": (
         f"{ROOT}/public/assets/monsters/bramble_warden.png",
         f"{ROOT}/public/assets/monsters/bramble_warden.png",

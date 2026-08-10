@@ -9,21 +9,24 @@ import { CombatOverlay } from "@/components/combat/CombatOverlay";
 import { Panel } from "@/components/ui/Panel";
 import type { GatheringNode, Interactable as InteractableType, Monster, Player } from "@/lib/game/types";
 
-// Hand-placed against assets/locations/mountains.png.
+// Hand-placed against assets/locations/mountains.png. The mine is the big
+// timber-rigged structure with rails and an arched, signed entrance on the
+// right side of the scene; the gathering nodes sit on the two crystal-lined
+// cave mouths bottom-left and top-left.
 const GATHER_POSITIONS: Record<string, { x: number; y: number }> = {
-  mountains_frost_iron_vein: { x: 35, y: 65 },
-  mountains_glacier_moss: { x: 15, y: 40 },
+  mountains_frost_iron_vein: { x: 8, y: 70 },
+  mountains_glacier_moss: { x: 32, y: 15 },
 };
 
 const INTERACTABLE_POSITIONS: Record<string, { x: number; y: number }> = {
-  mountains_mine_entrance: { x: 24, y: 52 },
-  mountains_chamber_entrance: { x: 58, y: 34 },
-  mountains_puzzle_rune_1: { x: 50, y: 42 },
-  mountains_puzzle_rune_2: { x: 66, y: 42 },
-  mountains_recover_second_seal: { x: 74, y: 22 },
+  mountains_mine_entrance: { x: 82, y: 27 },
+  mountains_chamber_entrance: { x: 90, y: 35 },
+  mountains_puzzle_rune_1: { x: 86, y: 43 },
+  mountains_puzzle_rune_2: { x: 93, y: 47 },
+  mountains_recover_second_seal: { x: 88, y: 49 },
 };
 
-const BOSS_POSITION = { x: 70, y: 25 };
+const BOSS_POSITION = { x: 88, y: 49 };
 
 export function MountainsScene({
   backgroundImage,
