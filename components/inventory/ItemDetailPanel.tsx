@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Panel } from "@/components/ui/Panel";
 import { Button } from "@/components/ui/Button";
 import { equipItem, unequipItem, useItemFromInventory } from "@/lib/actions/inventory";
+import { useI18n } from "@/lib/i18n/I18nProvider";
 import type { EquipSlot, Item } from "@/lib/game/types";
 
 export function ItemDetailPanel({
@@ -18,6 +19,7 @@ export function ItemDetailPanel({
   equippedSlot: EquipSlot | null;
 }) {
   const router = useRouter();
+  const { t } = useI18n();
   const [isPending, startTransition] = useTransition();
 
   function handleEquip() {
@@ -53,7 +55,7 @@ export function ItemDetailPanel({
         </div>
         <div>
           <p className="font-pixel text-sm text-gold">{item.name}</p>
-          <p className="text-xs text-parchment-dark">Qty: {quantity}</p>
+          <p className="text-xs text-parchment-dark">{t.inventory.qty(quantity)}</p>
         </div>
       </div>
       <p className="mt-3 text-sm text-parchment">{item.description}</p>
@@ -61,17 +63,17 @@ export function ItemDetailPanel({
       <div className="mt-4 flex gap-2">
         {item.equip_slot && !isEquipped && (
           <Button onClick={handleEquip} disabled={isPending}>
-            Equip
+            {t.inventory.equip}
           </Button>
         )}
         {item.equip_slot && isEquipped && (
           <Button variant="secondary" onClick={handleUnequip} disabled={isPending}>
-            Unequip
+            {t.inventory.unequip}
           </Button>
         )}
         {canUse && (
           <Button onClick={handleUse} disabled={isPending}>
-            Use
+            {t.inventory.use}
           </Button>
         )}
       </div>

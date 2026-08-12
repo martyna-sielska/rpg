@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Pixelify_Sans } from "next/font/google";
+import { getLocale } from "@/lib/i18n/locale";
+import { dictionaries } from "@/lib/i18n/dictionaries";
+import { I18nProvider } from "@/lib/i18n/I18nProvider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -18,18 +21,25 @@ const pixelify = Pixelify_Sans({
   weight: ["500", "600", "700"],
 });
 
-export const metadata: Metadata = {
-  title: "Wonderhill",
-  description: "Explore, quest, and grow in a village on the edge of a fading, magical forest.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  return {
+    title: "Magaly",
+    description: dictionaries[locale].landing.tagline,
+  };
+}
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const locale = await getLocale();
+
   return (
     <html
-      lang="en"
+      lang={locale}
       className={`${geistSans.variable} ${geistMono.variable} ${pixelify.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-background text-foreground">{children}</body>
+      <body className="min-h-full flex flex-col bg-background text-foreground">
+        <I18nProvider locale={locale}>{children}</I18nProvider>
+      </body>
     </html>
   );
 }

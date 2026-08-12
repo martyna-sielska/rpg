@@ -3,13 +3,20 @@ import { createClient } from "@/lib/supabase/server";
 import { getCurrentPlayer } from "@/lib/game/data";
 import { InventoryScreen } from "@/components/inventory/InventoryScreen";
 import type { RecipeView } from "@/components/crafting/CraftingPanel";
+import { dictionaries } from "@/lib/i18n/dictionaries";
+import { getLocale } from "@/lib/i18n/locale";
+import { localize } from "@/lib/i18n/localize";
 import type { Item } from "@/lib/game/types";
 
-export const metadata: Metadata = { title: "Inventory — Wonderhill" };
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  return { title: dictionaries[locale].meta.inventory };
+}
 
 export default async function InventoryPage() {
   const player = await getCurrentPlayer();
   const supabase = await createClient();
+  const locale = await getLocale();
 
   const [
     { data: inventoryRows },
@@ -25,7 +32,9 @@ export default async function InventoryPage() {
     supabase.from("crafting_recipe_ingredients").select("*"),
   ]);
 
-  const itemsById = new Map<string, Item>((allItems ?? []).map((i) => [i.id, i]));
+  const itemsById = new Map<string, Item>(
+    (allItems ?? []).map((i) => [i.id, localize(i, locale, ["name", "description"])])
+  );
   const ownedQtyByItemId = new Map<string, number>((inventoryRows ?? []).map((r) => [r.item_id, r.quantity]));
 
   const entries = (inventoryRows ?? [])

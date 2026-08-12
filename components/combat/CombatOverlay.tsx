@@ -12,6 +12,7 @@ import { COMBAT_TIMING, clampHp, pickMonsterAttack, playerAttackDamage, playerSk
 import { resolveCombat } from "@/lib/actions/combat";
 import { useHealingPotion } from "@/lib/actions/inventory";
 import { getCombatSizeClasses, getMonsterIdleAnimationClass, getMonsterScale } from "@/lib/game/monsterIdle";
+import { useI18n } from "@/lib/i18n/I18nProvider";
 import type { AttackPattern } from "@/lib/game/database.types";
 import type { Monster, Player } from "@/lib/game/types";
 
@@ -35,12 +36,13 @@ export function CombatOverlay({
   onClose: () => void;
 }) {
   const router = useRouter();
+  const { t } = useI18n();
   const [isPending, startTransition] = useTransition();
 
   const [playerHp, setPlayerHp] = useState(player.hp);
   const [monsterHp, setMonsterHp] = useState(monster.max_hp);
   const [phase, setPhase] = useState<Phase>("fighting");
-  const [log, setLog] = useState<string[]>([`A wild ${monster.name} appears!`]);
+  const [log, setLog] = useState<string[]>([t.combat.wildAppears(monster.name)]);
   const [telegraph, setTelegraph] = useState<AttackPattern | null>(null);
   const [potionCount, setPotionCount] = useState(initialPotionCount);
   const [floaters, setFloaters] = useState<FloatingText[]>([]);
@@ -58,8 +60,8 @@ export function CombatOverlay({
   const addFloater = useCallback((f: Omit<FloatingText, "id">) => {
     const id = ++floatingTextId;
     setFloaters((prev) => [...prev, { ...f, id }]);
-    const t = setTimeout(() => setFloaters((prev) => prev.filter((x) => x.id !== id)), 1100);
-    timers.current.push(t);
+    const timeoutId = setTimeout(() => setFloaters((prev) => prev.filter((x) => x.id !== id)), 1100);
+    timers.current.push(timeoutId);
   }, []);
 
   // tick for cooldown countdown display
@@ -84,8 +86,8 @@ export function CombatOverlay({
           if (cancelled) return;
           setTelegraph(null);
           if (dodgedRef.current) {
-            addFloater({ text: "Dodged!", target: "player", kind: "miss" });
-            setLog((l) => [...l, `You dodge the ${monster.name}'s ${pattern.name}.`]);
+            addFloater({ text: t.combat.dodgedFloater, target: "player", kind: "miss" });
+            setLog((l) => [...l, t.combat.youDodge()]);
           } else {
             const dmg = Math.max(1, pattern.damage - Math.floor(player.vitality / 4));
             setPlayerHp((hp) => {
@@ -95,7 +97,7 @@ export function CombatOverlay({
             });
             setPlayerHitKey((k) => k + 1);
             addFloater({ text: `-${dmg}`, target: "player", kind: "damage" });
-            setLog((l) => [...l, `${monster.name} hits you with ${pattern.name} for ${dmg}.`]);
+            setLog((l) => [...l, t.combat.monsterHits(monster.name, pattern.name, dmg)]);
           }
           loop();
         }, pattern.telegraph_ms);
@@ -155,7 +157,7 @@ export function CombatOverlay({
     setMonsterHp((hp) => clampHp(hp - dmg, monster.max_hp));
     setMonsterHitKey((k) => k + 1);
     addFloater({ text: `-${dmg}`, target: "monster", kind: "damage" });
-    setLog((l) => [...l, `You strike the ${monster.name} for ${dmg}.`]);
+    setLog((l) => [...l, t.combat.youStrike(monster.name, dmg)]);
     setAttackReadyAt(Date.now() + COMBAT_TIMING.attackCooldownMs);
   }
 
@@ -165,7 +167,7 @@ export function CombatOverlay({
     setMonsterHp((hp) => clampHp(hp - dmg, monster.max_hp));
     setMonsterHitKey((k) => k + 1);
     addFloater({ text: `-${dmg}!`, target: "monster", kind: "damage" });
-    setLog((l) => [...l, `Your skill lands for ${dmg} damage!`]);
+    setLog((l) => [...l, t.combat.skillLands(dmg)]);
     setSkillReadyAt(Date.now() + COMBAT_TIMING.skillCooldownMs);
   }
 
@@ -183,9 +185,9 @@ export function CombatOverlay({
         setPotionCount((c) => c - 1);
         setPlayerHp((hp) => clampHp(hp + healed, player.max_hp));
         addFloater({ text: `+${healed}`, target: "player", kind: "heal" });
-        setLog((l) => [...l, `You drink a healing potion (+${healed} HP).`]);
+        setLog((l) => [...l, t.combat.drinkPotion(healed)]);
       } catch (e) {
-        setLog((l) => [...l, e instanceof Error ? e.message : "Couldn't use the potion."]);
+        setLog((l) => [...l, e instanceof Error ? e.message : t.combat.potionFailed]);
       }
     });
   }
@@ -201,25 +203,23 @@ export function CombatOverlay({
         <Panel className="p-5">
           {phase === "victory" || phase === "defeat" ? (
             <div className="flex flex-col items-center gap-3 text-center">
-              <p className="font-pixel text-lg text-gold">{phase === "victory" ? "Victory!" : "You were overwhelmed..."}</p>
+              <p className="font-pixel text-lg text-gold">{phase === "victory" ? t.combat.victory : t.combat.defeat}</p>
               {phase === "victory" && rewards && (
                 <div className="text-sm text-parchment">
-                  <p>+{rewards.gold} gold</p>
+                  <p>{t.combat.goldGained(rewards.gold)}</p>
                   {rewards.loot.length > 0 && (
                     <p>
-                      Loot:{" "}
+                      {t.combat.lootLabel}{" "}
                       {rewards.loot.map((l) => `${l.quantity}× ${l.item_id.replace(/_/g, " ")}`).join(", ")}
                     </p>
                   )}
                 </div>
               )}
               {phase === "defeat" && (
-                <p className="text-sm text-parchment-dark">
-                  You limp away with 1 HP left. Rest at Home to recover.
-                </p>
+                <p className="text-sm text-parchment-dark">{t.combat.defeatMessage}</p>
               )}
               <Button onClick={handleDone} disabled={isPending}>
-                Continue
+                {t.common.continue}
               </Button>
             </div>
           ) : (
@@ -263,7 +263,7 @@ export function CombatOverlay({
                 {log.slice(-4).map((entry, i) => (
                   <p key={i}>{entry}</p>
                 ))}
-                {telegraph && <p className="font-semibold text-gold">{monster.name} winds up: {telegraph.name}!</p>}
+                {telegraph && <p className="font-semibold text-gold">{t.combat.windUp(monster.name, telegraph.name)}</p>}
               </div>
 
               <ActionBar

@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useDayPhase } from "@/lib/game/useDayPhase";
 import { SceneFrame } from "@/components/world/SceneFrame";
+import { useI18n } from "@/lib/i18n/I18nProvider";
 import type { Location, PlayerLocation } from "@/lib/game/types";
 
 const LOCATION_ROUTE: Record<string, string> = {
@@ -58,12 +59,13 @@ export function WorldMap({
   currentLocationId: string;
 }) {
   const phase = useDayPhase();
+  const { t } = useI18n();
 
   return (
     <SceneFrame>
       <Image
         src="/assets/map2.png"
-        alt="World map"
+        alt={t.sceneAlt.worldMap}
         fill
         priority
         unoptimized
@@ -95,7 +97,7 @@ export function WorldMap({
             >
               <span className="pointer-events-none absolute left-1/2 top-2 -translate-x-1/2 whitespace-nowrap rounded-md border-2 border-wood-dark bg-wood-darkest/90 px-2 py-0.5 text-[10px] font-semibold text-parchment opacity-0 shadow-lg transition group-hover:opacity-100">
                 {location.name}
-                {isCurrent ? " (here)" : ""}
+                {isCurrent ? ` ${t.worldMap.here}` : ""}
               </span>
             </Link>
           );
@@ -118,7 +120,7 @@ export function WorldMap({
               </div>
               <div className="pointer-events-none absolute left-1/2 top-full mt-1 -translate-x-1/2 whitespace-nowrap rounded-md border-2 border-wood-dark bg-wood-darkest/90 px-2 py-0.5 text-[10px] font-semibold text-parchment opacity-0 shadow-lg transition group-hover:opacity-100">
                 {location.name}
-                {isCurrent ? " (here)" : ""}
+                {isCurrent ? ` ${t.worldMap.here}` : ""}
               </div>
             </Link>
           );
@@ -134,7 +136,7 @@ export function WorldMap({
           >
             <div
               className="flex h-10 w-10 cursor-not-allowed items-center justify-center rounded-full border-4 border-wood-dark bg-wood-darkest/80 p-1 opacity-60 shadow-[0_6px_16px_rgba(0,0,0,0.5)]"
-              title={location.unlock_hint ?? "Locked"}
+              title={location.unlock_hint ?? t.worldMap.locked}
             >
               <Image src="/assets/items/locked_location_padlock.png" alt="" aria-hidden width={32} height={32} unoptimized className="h-full w-full object-contain" />
             </div>

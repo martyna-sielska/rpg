@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/Button";
+import { useI18n } from "@/lib/i18n/I18nProvider";
 
 export function ActionBar({
   onAttack,
@@ -23,19 +24,20 @@ export function ActionBar({
   potionCount: number;
   disabled: boolean;
 }) {
+  const { t } = useI18n();
   return (
     <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
       <Button variant="primary" onClick={onAttack} disabled={disabled || !attackReady}>
-        ⚔️ Attack
+        ⚔️ {t.combat.attack}
       </Button>
       <Button variant="primary" onClick={onSkill} disabled={disabled || !skillReady}>
-        ✨ Skill
+        ✨ {t.combat.skill}
       </Button>
       <Button variant="secondary" onClick={onDodge} disabled={disabled || !dodgeReady}>
-        💨 Dodge
+        💨 {t.combat.dodge}
       </Button>
       <Button variant="secondary" onClick={onPotion} disabled={disabled || potionCount < 1}>
-        🧪 Potion ({potionCount})
+        🧪 {t.combat.potion(potionCount)}
       </Button>
     </div>
   );

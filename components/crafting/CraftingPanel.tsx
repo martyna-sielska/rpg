@@ -2,6 +2,7 @@
 
 import { Panel } from "@/components/ui/Panel";
 import { RecipeCard } from "@/components/crafting/RecipeCard";
+import { useI18n } from "@/lib/i18n/I18nProvider";
 import type { Item } from "@/lib/game/types";
 
 export interface RecipeView {
@@ -13,11 +14,12 @@ export interface RecipeView {
 }
 
 export function CraftingPanel({ recipes, playerLevel }: { recipes: RecipeView[]; playerLevel: number }) {
+  const { t } = useI18n();
   return (
     <Panel className="p-4">
-      <h2 className="mb-3 font-pixel text-sm text-gold">Crafting</h2>
+      <h2 className="mb-3 font-pixel text-sm text-gold">{t.crafting.title}</h2>
       {recipes.length === 0 ? (
-        <p className="text-sm text-parchment-dark">No recipes known yet.</p>
+        <p className="text-sm text-parchment-dark">{t.crafting.none}</p>
       ) : (
         <div className="flex flex-col gap-2">
           {recipes.map((r) => (

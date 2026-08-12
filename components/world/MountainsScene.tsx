@@ -8,6 +8,7 @@ import { MonsterHotspot } from "@/components/combat/MonsterHotspot";
 import { CombatOverlay } from "@/components/combat/CombatOverlay";
 import { Panel } from "@/components/ui/Panel";
 import { SceneFrame } from "@/components/world/SceneFrame";
+import { useI18n } from "@/lib/i18n/I18nProvider";
 import type { GatheringNode, Interactable as InteractableType, Monster, Player } from "@/lib/game/types";
 
 // Hand-placed against assets/locations/mountains.png. The mine is the big
@@ -60,10 +61,11 @@ export function MountainsScene({
   potionCount: number;
 }) {
   const [activeMonster, setActiveMonster] = useState<Monster | null>(null);
+  const { t } = useI18n();
 
   return (
     <SceneFrame>
-      <Image src={backgroundImage} alt="Frost Mountains" fill priority unoptimized className="object-cover" />
+      <Image src={backgroundImage} alt={t.sceneAlt.mountains} fill priority unoptimized className="object-cover" />
       <div className="absolute inset-0 bg-blue-950/20" />
 
       {gatheringNodes.map((node) => {
@@ -102,9 +104,7 @@ export function MountainsScene({
 
       {boss && !bossDefeated && (!puzzleSolved || !questActive) && (
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2">
-          <Panel className="px-4 py-2 text-center text-xs text-parchment-dark">
-            The chamber&apos;s inner door stays shut. Something in this room still wants activating.
-          </Panel>
+          <Panel className="px-4 py-2 text-center text-xs text-parchment-dark">{t.mountains.bossLocked}</Panel>
         </div>
       )}
 

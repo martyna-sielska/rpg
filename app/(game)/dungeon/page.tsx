@@ -4,15 +4,22 @@ import { getCurrentPlayer } from "@/lib/game/data";
 import { travelToLocation } from "@/lib/actions/world";
 import { DungeonScene } from "@/components/world/DungeonScene";
 import { avatarById } from "@/lib/game/types";
+import { dictionaries } from "@/lib/i18n/dictionaries";
+import { getLocale } from "@/lib/i18n/locale";
+import { localize } from "@/lib/i18n/localize";
 import type { StatBonus } from "@/lib/game/database.types";
 
-export const metadata: Metadata = { title: "Forest Dungeon — Wonderhill" };
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  return { title: dictionaries[locale].meta.dungeon };
+}
 
 export default async function DungeonPage() {
   await travelToLocation("dungeon_ruins");
 
   const player = await getCurrentPlayer();
   const supabase = await createClient();
+  const locale = await getLocale();
 
   const [{ data: location }, { data: monsters }, { data: bossState }, { data: interactables }, { data: equipment }, { data: potionRow }] =
     await Promise.all([
@@ -30,17 +37,17 @@ export default async function DungeonPage() {
     weaponBonus = (weapon?.stat_bonus as StatBonus | undefined)?.strength ?? 0;
   }
 
-  const miniboss = monsters?.find((m) => m.tier === "miniboss") ?? null;
-  const boss = monsters?.find((m) => m.tier === "boss") ?? null;
+  const miniboss = monsters?.find((m) => m.tier === "miniboss");
+  const boss = monsters?.find((m) => m.tier === "boss");
   const minibossDefeated = bossState?.some((s) => s.monster_id === miniboss?.id && s.defeated) ?? false;
   const bossDefeated = bossState?.some((s) => s.monster_id === boss?.id && s.defeated) ?? false;
 
   return (
     <DungeonScene
       backgroundImage={location?.background_image ?? "/assets/locations/dungeon.png"}
-      interactables={interactables ?? []}
-      miniboss={miniboss}
-      boss={boss}
+      interactables={(interactables ?? []).map((i) => localize(i, locale, ["name", "lines"]))}
+      miniboss={miniboss ? localize(miniboss, locale, ["name", "description"]) : null}
+      boss={boss ? localize(boss, locale, ["name", "description"]) : null}
       minibossDefeated={minibossDefeated}
       bossDefeated={bossDefeated}
       player={player}

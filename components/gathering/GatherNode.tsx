@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { gatherNode } from "@/lib/actions/inventory";
+import { useI18n } from "@/lib/i18n/I18nProvider";
 
 export function GatherNode({
   nodeId,
@@ -19,6 +20,7 @@ export function GatherNode({
   mapY: number;
 }) {
   const router = useRouter();
+  const { t } = useI18n();
   const [isPending, startTransition] = useTransition();
   const [message, setMessage] = useState<string | null>(null);
 
@@ -26,10 +28,10 @@ export function GatherNode({
     startTransition(async () => {
       try {
         const result = await gatherNode(nodeId);
-        setMessage(`+${result.quantity} ${result.itemId.replace(/_/g, " ")}`);
+        setMessage(t.gather.gained(result.quantity, result.itemId.replace(/_/g, " ")));
         router.refresh();
       } catch (e) {
-        setMessage(e instanceof Error ? e.message : "Nothing to gather here right now.");
+        setMessage(e instanceof Error ? e.message : t.gather.nothingToGather);
       }
       setTimeout(() => setMessage(null), 2500);
     });

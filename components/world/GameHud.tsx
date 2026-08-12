@@ -5,6 +5,8 @@ import { xpProgress } from "@/lib/game/xp";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { DayNightIndicator } from "@/components/world/DayNightIndicator";
 import { IntroHelpButton } from "@/components/intro/IntroHelpButton";
+import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
+import { getDictionary } from "@/lib/i18n/getDictionary";
 import type { Player } from "@/lib/game/types";
 
 // Bust-crop vertical anchor per avatar, tuned per portrait since headwear height
@@ -25,24 +27,25 @@ const AVATAR_CROP_SCALE: Record<string, number> = {
   rowan: 1.85,
 };
 
-const NAV_LINKS = [
-  { href: "/world-map", label: "World Map", icon: "/assets/icons/world_map.png" },
-  { href: "/character", label: "Character", icon: "/assets/icons/character.png" },
-  { href: "/inventory", label: "Inventory", icon: "/assets/icons/inventory.png" },
-  { href: "/quests", label: "Quests", icon: "/assets/icons/quests.png" },
-  { href: "/home", label: "Home", icon: "/assets/icons/home.png" },
-] as const;
-
 /**
  * Small, always-on corner HUD — deliberately not a full-width dashboard nav.
  * Scenes render full-bleed behind it; this only ever shows a glance of player
  * state plus a compact icon dock for the main game sections.
  */
-export function GameHud({ player }: { player: Player }) {
+export async function GameHud({ player }: { player: Player }) {
   const avatar = avatarById(player.avatar_id);
   const { xp, required } = xpProgress(player.level, player.xp);
   const hpPercent = player.max_hp > 0 ? Math.min(100, Math.max(0, (player.hp / player.max_hp) * 100)) : 0;
   const xpPercent = required > 0 ? Math.min(100, Math.max(0, (xp / required) * 100)) : 0;
+  const t = await getDictionary();
+
+  const navLinks = [
+    { href: "/world-map", label: t.nav.worldMap, icon: "/assets/icons/world_map.png" },
+    { href: "/character", label: t.nav.character, icon: "/assets/icons/character.png" },
+    { href: "/inventory", label: t.nav.inventory, icon: "/assets/icons/inventory.png" },
+    { href: "/quests", label: t.nav.quests, icon: "/assets/icons/quests.png" },
+    { href: "/home", label: t.nav.home, icon: "/assets/icons/home.png" },
+  ] as const;
 
   return (
     <div className="pointer-events-none fixed inset-x-0 top-0 z-40 flex items-start justify-between gap-3 p-3 sm:p-4">
@@ -65,7 +68,9 @@ export function GameHud({ player }: { player: Player }) {
         <div className="flex w-24 flex-col gap-1 sm:w-28">
           <div className="flex items-center justify-between text-[11px] font-semibold text-parchment">
             <span className="truncate">{player.username}</span>
-            <span className="shrink-0 text-parchment-dark">Lv {player.level}</span>
+            <span className="shrink-0 text-parchment-dark">
+              {t.hud.level} {player.level}
+            </span>
           </div>
           <div className="h-1.5 w-full overflow-hidden rounded-full border border-wood-darkest bg-wood-darkest/80">
             <div className="h-full rounded-full bg-hp transition-all duration-500" style={{ width: `${hpPercent}%` }} />
@@ -82,7 +87,7 @@ export function GameHud({ player }: { player: Player }) {
       </div>
 
       <div className="pointer-events-auto flex items-center gap-1 rounded-xl border-4 border-wood-dark bg-wood/95 p-1.5 shadow-[0_8px_24px_rgba(0,0,0,0.5)]">
-        {NAV_LINKS.map((link) => (
+        {navLinks.map((link) => (
           <Link
             key={link.href}
             href={link.href}
@@ -93,7 +98,10 @@ export function GameHud({ player }: { player: Player }) {
             <Image src={link.icon} alt={link.label} fill sizes="40px" unoptimized className="object-contain" />
           </Link>
         ))}
-        <div className="flex items-center gap-0">
+        <div className="flex items-center gap-1">
+          <div className="scale-90">
+            <LanguageSwitcher />
+          </div>
           <IntroHelpButton />
           <div className="scale-90">
             <LogoutButton />

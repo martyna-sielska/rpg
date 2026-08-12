@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Interactable } from "@/components/world/Interactable";
 import { DayNightOverlay } from "@/components/world/DayNightOverlay";
 import { SceneFrame } from "@/components/world/SceneFrame";
+import { useI18n } from "@/lib/i18n/I18nProvider";
 import type { Interactable as InteractableType } from "@/lib/game/types";
 
 // Hand-placed against assets/locations/ancient_ruins.png — covers the
@@ -33,9 +34,10 @@ export function AncientRuinsScene({
   backgroundImage: string;
   interactables: InteractableType[];
 }) {
+  const { t } = useI18n();
   return (
     <SceneFrame>
-      <Image src={backgroundImage} alt="Ancient Ruins" fill priority unoptimized className="object-cover" />
+      <Image src={backgroundImage} alt={t.sceneAlt.ancientRuins} fill priority unoptimized className="object-cover" />
       <div className="absolute inset-0 bg-black/15" />
       <DayNightOverlay />
 

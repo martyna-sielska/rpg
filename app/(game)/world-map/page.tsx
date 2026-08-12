@@ -1,8 +1,13 @@
 import type { Metadata } from "next";
 import { getAllLocations, getCurrentPlayer, getPlayerLocations } from "@/lib/game/data";
 import { WorldMap } from "@/components/world/WorldMap";
+import { dictionaries } from "@/lib/i18n/dictionaries";
+import { getLocale } from "@/lib/i18n/locale";
 
-export const metadata: Metadata = { title: "World Map — Wonderhill" };
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  return { title: dictionaries[locale].meta.worldMap };
+}
 
 export default async function WorldMapPage() {
   const [player, locations, playerLocations] = await Promise.all([

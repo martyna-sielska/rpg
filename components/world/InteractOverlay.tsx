@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { Panel } from "@/components/ui/Panel";
 import { Button } from "@/components/ui/Button";
+import { useI18n } from "@/lib/i18n/I18nProvider";
 import type { InteractResult } from "@/lib/actions/interactables";
 
 export function InteractOverlay({
@@ -17,6 +18,7 @@ export function InteractOverlay({
   error: string | null;
   onClose: () => void;
 }) {
+  const { t } = useI18n();
   const [lineIndex, setLineIndex] = useState(0);
 
   function handleAdvance() {
@@ -38,7 +40,7 @@ export function InteractOverlay({
           {error && (
             <div className="flex flex-col gap-3">
               <p className="text-sm text-parchment">{error}</p>
-              <Button onClick={onClose}>Close</Button>
+              <Button onClick={onClose}>{t.common.close}</Button>
             </div>
           )}
 
@@ -55,7 +57,7 @@ export function InteractOverlay({
                       </div>
                     )}
                     <p className="text-xs font-semibold text-gold">
-                      +{result.grantedItemQty} {result.grantedItemId.replace(/_/g, " ")}
+                      {t.interact.grantedItem(result.grantedItemQty, result.grantedItemId.replace(/_/g, " "))}
                     </p>
                   </div>
                 )}
@@ -67,9 +69,9 @@ export function InteractOverlay({
                   disabled={lineIndex === 0}
                   className="text-sm font-semibold text-parchment-dark underline-offset-2 hover:text-parchment hover:underline disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:no-underline"
                 >
-                  Back
+                  {t.common.back}
                 </button>
-                <Button onClick={handleAdvance}>{lineIndex < result.lines.length - 1 ? "Next" : "Close"}</Button>
+                <Button onClick={handleAdvance}>{lineIndex < result.lines.length - 1 ? t.common.next : t.common.close}</Button>
               </div>
             </div>
           )}

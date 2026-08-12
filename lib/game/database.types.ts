@@ -34,13 +34,16 @@ export interface Database {
         Row: {
           id: string;
           name: string;
+          name_pl: string | null;
           description: string;
+          description_pl: string | null;
           background_image: string;
           map_x: number;
           map_y: number;
           region_kind: RegionKind;
           is_implemented: boolean;
           unlock_hint: string | null;
+          unlock_hint_pl: string | null;
           sort_order: number;
         };
         Insert: Partial<Database["public"]["Tables"]["locations"]["Row"]> & { id: string; name: string; background_image: string };
@@ -54,6 +57,7 @@ export interface Database {
           location_id: string;
           portrait_image: string;
           role: string;
+          role_pl: string | null;
           sort_order: number;
         };
         Insert: Partial<Database["public"]["Tables"]["npcs"]["Row"]> & { id: string; name: string; location_id: string; portrait_image: string; role: string };
@@ -64,7 +68,9 @@ export interface Database {
         Row: {
           id: string;
           name: string;
+          name_pl: string | null;
           description: string;
+          description_pl: string | null;
           item_type: ItemType;
           icon_image: string;
           equip_slot: EquipSlot | null;
@@ -81,6 +87,7 @@ export interface Database {
         Row: {
           id: string;
           name: string;
+          name_pl: string | null;
           location_id: string;
           tier: MonsterTier;
           sprite_image: string;
@@ -93,6 +100,7 @@ export interface Database {
           attack_patterns: AttackPattern[];
           weakness: string | null;
           description: string;
+          description_pl: string | null;
         };
         Insert: Partial<Database["public"]["Tables"]["monsters"]["Row"]> & { id: string; name: string; location_id: string; tier: MonsterTier; sprite_image: string; max_hp: number; attack: number };
         Update: Partial<Database["public"]["Tables"]["monsters"]["Row"]>;
@@ -104,6 +112,7 @@ export interface Database {
           location_id: string;
           item_id: string;
           name: string;
+          name_pl: string | null;
           respawn_seconds: number;
         };
         Insert: Partial<Database["public"]["Tables"]["gathering_nodes"]["Row"]> & { id: string; location_id: string; item_id: string; name: string };
@@ -136,7 +145,9 @@ export interface Database {
         Row: {
           id: string;
           title: string;
+          title_pl: string | null;
           description: string;
+          description_pl: string | null;
           giver_npc_id: string;
           location_id: string;
           min_level: number;
@@ -170,6 +181,7 @@ export interface Database {
           target_id: string;
           target_count: number;
           description: string;
+          description_pl: string | null;
         };
         Insert: Partial<Database["public"]["Tables"]["quest_objectives"]["Row"]> & { quest_id: string; order_index: number; objective_type: ObjectiveType; target_id: string; description: string };
         Update: Partial<Database["public"]["Tables"]["quest_objectives"]["Row"]>;
@@ -182,7 +194,9 @@ export interface Database {
           quest_id: string | null;
           state: DialogueState;
           lines: string[];
+          lines_pl: string[] | null;
           response_label: string;
+          response_label_pl: string | null;
         };
         Insert: Partial<Database["public"]["Tables"]["npc_dialogues"]["Row"]> & { npc_id: string; state: DialogueState; lines: string[] };
         Update: Partial<Database["public"]["Tables"]["npc_dialogues"]["Row"]>;
@@ -193,9 +207,11 @@ export interface Database {
           id: string;
           location_id: string;
           name: string;
+          name_pl: string | null;
           map_x: number;
           map_y: number;
           lines: string[];
+          lines_pl: string[] | null;
           grants_item_id: string | null;
           grants_item_qty: number;
         };
@@ -367,7 +383,9 @@ export interface Database {
           out_npc_name: string;
           out_state: DialogueState;
           out_lines: string[];
+          out_lines_pl: string[] | null;
           out_response_label: string;
+          out_response_label_pl: string | null;
           out_quest_id: string | null;
         }[];
       };
@@ -399,7 +417,12 @@ export interface Database {
       };
       interact_with_object: {
         Args: { p_id: string };
-        Returns: { out_lines: string[]; out_granted_item_id: string | null; out_granted_item_qty: number }[];
+        Returns: {
+          out_lines: string[];
+          out_lines_pl: string[] | null;
+          out_granted_item_id: string | null;
+          out_granted_item_qty: number;
+        }[];
       };
       craft_item: {
         Args: { p_recipe_id: string };

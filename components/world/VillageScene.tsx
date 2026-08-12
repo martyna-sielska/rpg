@@ -8,6 +8,7 @@ import { DayNightOverlay } from "@/components/world/DayNightOverlay";
 import { Interactable } from "@/components/world/Interactable";
 import { SceneFrame } from "@/components/world/SceneFrame";
 import { useDayPhase } from "@/lib/game/useDayPhase";
+import { useI18n } from "@/lib/i18n/I18nProvider";
 import type { Interactable as InteractableType, Npc } from "@/lib/game/types";
 
 // Hand-placed against assets/village.png (fountain square, bakery top-left,
@@ -47,10 +48,11 @@ export function VillageScene({
   const [activeNpcId, setActiveNpcId] = useState<string | null>(null);
   const [closedMessage, setClosedMessage] = useState<string | null>(null);
   const phase = useDayPhase();
+  const { t } = useI18n();
 
   function handleNpcClick(npc: Npc) {
     if (phase === "night" && NIGHT_CLOSED_NPCS.has(npc.id)) {
-      setClosedMessage(`${npc.name} has gone home for the night.`);
+      setClosedMessage(t.village.goneHome(npc.name));
       setTimeout(() => setClosedMessage(null), 2200);
       return;
     }
@@ -61,7 +63,7 @@ export function VillageScene({
 
   return (
     <SceneFrame>
-      <Image src={backgroundImage} alt="Village" fill priority unoptimized className="object-cover" />
+      <Image src={backgroundImage} alt={t.sceneAlt.village} fill priority unoptimized className="object-cover" />
       <div className="absolute inset-0 bg-black/10" />
       <DayNightOverlay />
 

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { getDictionary } from "@/lib/i18n/getDictionary";
 
 export interface QuestTurnInResult {
   newLevel: number;
@@ -17,7 +18,10 @@ export async function completeQuestTurnIn(questId: string): Promise<QuestTurnInR
   const supabase = await createClient();
   const { data, error } = await supabase.rpc("complete_quest_turn_in", { p_quest_id: questId });
   const row = data?.[0];
-  if (error || !row) throw new Error(error?.message ?? "Couldn't turn in this quest.");
+  if (error || !row) {
+    const t = await getDictionary();
+    throw new Error(error?.message ?? t.dialogue.turnInError);
+  }
 
   revalidatePath("/quests");
   revalidatePath("/character");

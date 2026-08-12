@@ -4,15 +4,22 @@ import { getCurrentPlayer } from "@/lib/game/data";
 import { travelToLocation } from "@/lib/actions/world";
 import { MountainsScene } from "@/components/world/MountainsScene";
 import { avatarById } from "@/lib/game/types";
+import { dictionaries } from "@/lib/i18n/dictionaries";
+import { getLocale } from "@/lib/i18n/locale";
+import { localize } from "@/lib/i18n/localize";
 import type { StatBonus } from "@/lib/game/database.types";
 
-export const metadata: Metadata = { title: "Frost Mountains — Wonderhill" };
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  return { title: dictionaries[locale].meta.mountains };
+}
 
 export default async function MountainsPage() {
   await travelToLocation("mountains");
 
   const player = await getCurrentPlayer();
   const supabase = await createClient();
+  const locale = await getLocale();
 
   const [
     { data: location },
@@ -44,7 +51,7 @@ export default async function MountainsPage() {
     weaponBonus = (weapon?.stat_bonus as StatBonus | undefined)?.strength ?? 0;
   }
 
-  const boss = monsters?.[0] ?? null;
+  const boss = monsters?.[0] ? localize(monsters[0], locale, ["name", "description"]) : null;
   const bossDefeated = bossState?.some((s) => s.monster_id === boss?.id && s.defeated) ?? false;
   const puzzleSolved = (interactions?.length ?? 0) > 0;
   const questActive = secondSealQuest?.status === "active" || secondSealQuest?.status === "ready_to_turn_in";
@@ -53,9 +60,9 @@ export default async function MountainsPage() {
   return (
     <MountainsScene
       backgroundImage={location?.background_image ?? "/assets/locations/mountains.png"}
-      gatheringNodes={gatheringNodes ?? []}
+      gatheringNodes={(gatheringNodes ?? []).map((n) => localize(n, locale, ["name"]))}
       itemIcons={itemIcons}
-      interactables={interactables ?? []}
+      interactables={(interactables ?? []).map((i) => localize(i, locale, ["name", "lines"]))}
       boss={boss}
       bossDefeated={bossDefeated}
       puzzleSolved={puzzleSolved}

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { Interactable } from "@/components/world/Interactable";
 import { SceneFrame } from "@/components/world/SceneFrame";
+import { useI18n } from "@/lib/i18n/I18nProvider";
 import type { Interactable as InteractableType } from "@/lib/game/types";
 
 // The Hollow reuses the Forest Dungeon's background art (the only moody
@@ -21,11 +22,12 @@ export function HollowScene({
   backgroundImage: string;
   interactables: InteractableType[];
 }) {
+  const { t } = useI18n();
   return (
     <SceneFrame>
       <Image
         src={backgroundImage}
-        alt="The Hollow"
+        alt={t.sceneAlt.hollow}
         fill
         priority
         unoptimized

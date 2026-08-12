@@ -19,7 +19,7 @@
 -- kept roughly aligned to that rect's center.
 insert into public.locations (id, name, description, background_image, map_x, map_y, region_kind, is_implemented, unlock_hint, sort_order) values
   ('home', 'Home', 'A small, cozy home at the edge of the village. Rest here to recover, and craft with what you''ve gathered.', '/assets/locations/home.png', 12, 59, 'home', true, null, 0),
-  ('village', 'Magic Hill', 'A quiet village on the edge of a mysterious forest. Lately, the magic that has always watched over it seems to be fading.', '/assets/locations/village.png', 43, 67, 'settlement', true, null, 1),
+  ('village', 'Magaly', 'A quiet village on the edge of a mysterious forest. Lately, the magic that has always watched over it seems to be fading.', '/assets/locations/village.png', 43, 67, 'settlement', true, null, 1),
   ('forest', 'Enchanted Forest', 'Ancient trees, glowing groves, and old ruins half-swallowed by moss. Something out here is unwell.', '/assets/locations/forest.png', 34, 24, 'wilderness', true, null, 2),
   ('dungeon_ruins', 'Forest Dungeon', 'A buried stretch of an older world, its rune circles still faintly warm. Whatever is guarding it does not want visitors.', '/assets/locations/dungeon.png', 57, 12, 'dungeon', true, null, 3),
   ('lake', 'Magic Lake', 'Still, dark water at the foot of the hill. Lately it doesn''t look so still.', '/assets/locations/lake.png', 54, 55, 'landmark', false, 'The waters hold secrets not yet ready to be found.', 4),
@@ -809,7 +809,7 @@ insert into public.interactables (id, location_id, name, map_x, map_y, lines, gr
      'Whoever came before you didn''t just visit. They tried to break it.'
    ], 'third_seal', 1),
 
-  -- Magic Hill / village (Quest 18)
+  -- Magaly / village (Quest 18)
   ('village_three_seals_altar', 'village', 'The Three Seals, Laid Out',
    58, 55,
    array[
@@ -841,7 +841,7 @@ on conflict (id) do update set
 
 insert into public.quests (id, title, description, giver_npc_id, location_id, min_level, xp_reward, gold_reward, item_reward_id, item_reward_qty, is_main, sort_order, prerequisite_quest_id, unlocks_location_id) values
   ('something_in_the_water', 'Something in the Water',
-   'The Broken Crystal''s magic is tied to the water around Magic Hill, Elira says. She wants you to investigate Magic Lake.',
+   'The Broken Crystal''s magic is tied to the water around Magaly, Elira says. She wants you to investigate Magic Lake.',
    'elira', 'village', 1, 60, 25, null, 0, true, 7, 'the_broken_crystal', 'lake'),
   ('the_tower', 'The Tower',
    'Elira can''t identify the seal you found. Someone in the Magic Tower might.',
@@ -1369,7 +1369,7 @@ insert into public.quests (id, title, description, giver_npc_id, location_id, mi
    'Elira has been carrying more than research. There''s something — someone — she''s never told you about.',
    'elira', 'village', 1, 50, 15, null, 0, false, 16, 'the_hollow', null),
   ('flour_and_stone', 'Flour and Stone',
-   'Mira''s family has been on Magic Hill longer than anyone can quite explain.',
+   'Mira''s family has been on Magaly longer than anyone can quite explain.',
    'mira', 'village', 1, 40, 10, null, 0, false, 0, 'the_hollow', null)
 on conflict (id) do update set
   title = excluded.title, description = excluded.description, giver_npc_id = excluded.giver_npc_id,

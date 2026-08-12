@@ -1,6 +1,8 @@
 import { cache } from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { getLocale } from "@/lib/i18n/locale";
+import { localize } from "@/lib/i18n/localize";
 import type { Location, Player, PlayerLocation } from "@/lib/game/types";
 
 /** Cached per request: fetches the signed-in player's row, redirecting to /login if there is none. */
@@ -32,8 +34,9 @@ export const getCurrentPlayer = cache(async (): Promise<Player> => {
 /** Every location in the game, ordered for the World Map (locked ones included). */
 export const getAllLocations = cache(async (): Promise<Location[]> => {
   const supabase = await createClient();
+  const locale = await getLocale();
   const { data } = await supabase.from("locations").select("*").order("sort_order");
-  return data ?? [];
+  return (data ?? []).map((l) => localize(l, locale, ["name", "description", "unlock_hint"]));
 });
 
 /** The signed-in player's per-location unlock/discovery state. */

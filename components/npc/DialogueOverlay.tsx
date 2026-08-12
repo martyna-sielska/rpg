@@ -8,6 +8,7 @@ import { completeQuestTurnIn, type QuestTurnInResult } from "@/lib/actions/quest
 import { Panel } from "@/components/ui/Panel";
 import { Button } from "@/components/ui/Button";
 import { LevelUpModal } from "@/components/level-up/LevelUpModal";
+import { useI18n } from "@/lib/i18n/I18nProvider";
 
 // Falls back to a single placeholder line if a dialogue row is ever missing
 // server-side (talk_to_npc returns an empty array rather than an error) —
@@ -26,6 +27,7 @@ export function DialogueOverlay({
   onClose: () => void;
 }) {
   const router = useRouter();
+  const { t } = useI18n();
   const [isPending, startTransition] = useTransition();
   const [result, setResult] = useState<TalkResult | null>(null);
   const [lineIndex, setLineIndex] = useState(0);
@@ -40,7 +42,7 @@ export function DialogueOverlay({
         setResult(res);
         setLineIndex(0);
       } catch (e) {
-        setError(e instanceof Error ? e.message : "Something went wrong.");
+        setError(e instanceof Error ? e.message : t.dialogue.loadError);
       }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -69,7 +71,7 @@ export function DialogueOverlay({
           const summary = await completeQuestTurnIn(result.questId!);
           setReward(summary);
         } catch (e) {
-          setError(e instanceof Error ? e.message : "Couldn't turn in the quest.");
+          setError(e instanceof Error ? e.message : t.dialogue.turnInError);
         }
       });
       return;
@@ -85,19 +87,19 @@ export function DialogueOverlay({
           {error && (
             <div className="flex flex-col gap-3">
               <p className="text-sm text-parchment">{error}</p>
-              <Button onClick={handleClose}>Close</Button>
+              <Button onClick={handleClose}>{t.common.close}</Button>
             </div>
           )}
 
           {!error && reward && (
             <div className="flex flex-col items-center gap-2 text-center">
-              <p className="font-pixel text-base text-gold">Quest Complete!</p>
+              <p className="font-pixel text-base text-gold">{t.dialogue.questComplete}</p>
               <p className="text-sm text-parchment">
-                You earned gold and experience.
+                {t.dialogue.earnedRewards}
                 {reward.rewardItemId && (
                   <>
                     {" "}
-                    You received <span className="font-semibold text-gold">{reward.rewardItemQty}× {reward.rewardItemId.replace(/_/g, " ")}</span>.
+                    {t.dialogue.received(reward.rewardItemQty, reward.rewardItemId.replace(/_/g, " "))}
                   </>
                 )}
               </p>
@@ -115,7 +117,7 @@ export function DialogueOverlay({
                   }
                 }}
               >
-                Nice!
+                {t.common.nice}
               </Button>
             </div>
           )}
@@ -142,13 +144,13 @@ export function DialogueOverlay({
                   disabled={isPending || lineIndex === 0}
                   className="text-sm font-semibold text-parchment-dark underline-offset-2 hover:text-parchment hover:underline disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:no-underline"
                 >
-                  Back
+                  {t.common.back}
                 </button>
                 <Button onClick={handleAdvance} disabled={isPending}>
                   {isPending
-                    ? "..."
+                    ? t.common.loading
                     : lineIndex < lines(result).length - 1
-                      ? "Next"
+                      ? t.common.next
                       : result.responseLabel}
                 </Button>
               </div>

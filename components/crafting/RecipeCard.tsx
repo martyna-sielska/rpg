@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { craftRecipe } from "@/lib/actions/inventory";
+import { useI18n } from "@/lib/i18n/I18nProvider";
 import type { Item } from "@/lib/game/types";
 
 export function RecipeCard({
@@ -21,6 +22,7 @@ export function RecipeCard({
   canAfford: boolean;
 }) {
   const router = useRouter();
+  const { t } = useI18n();
   const [isPending, startTransition] = useTransition();
 
   function handleCraft() {
@@ -53,7 +55,7 @@ export function RecipeCard({
         </p>
       </div>
       <Button onClick={handleCraft} disabled={!canAfford || isPending} className="shrink-0 px-3 py-1.5 text-xs">
-        Craft
+        {t.crafting.craft}
       </Button>
     </div>
   );

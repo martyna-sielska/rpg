@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { AVATAR_OPTIONS, type AvatarId } from "@/lib/game/types";
+import { useI18n } from "@/lib/i18n/I18nProvider";
 
 export function AvatarPicker({
   value,
@@ -10,10 +11,11 @@ export function AvatarPicker({
   value: AvatarId;
   onChange: (id: AvatarId) => void;
 }) {
+  const { t } = useI18n();
   return (
     <div>
       <span className="mb-2 block font-pixel text-xs uppercase tracking-wide text-parchment-dark">
-        Choose your hero
+        {t.auth.chooseHero}
       </span>
       <div className="grid grid-cols-4 gap-2">
         {AVATAR_OPTIONS.map((avatar) => {
@@ -43,7 +45,7 @@ export function AvatarPicker({
               <span className="text-[10px] font-semibold text-parchment sm:text-xs">
                 {avatar.name}
               </span>
-              <span className="text-[9px] text-parchment-dark">{avatar.className}</span>
+              <span className="text-[9px] text-parchment-dark">{t.heroClass[avatar.id]}</span>
             </button>
           );
         })}

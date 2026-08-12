@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { interactWithObject, type InteractResult } from "@/lib/actions/interactables";
 import { InteractOverlay } from "@/components/world/InteractOverlay";
+import { useI18n } from "@/lib/i18n/I18nProvider";
 
 // Per-interactable icon overrides, cropped from assets/items2.png (see
 // scripts/crop-items2-icons.py). Anything not listed here — the large
@@ -43,6 +44,7 @@ export function Interactable({
   navigateTo?: string;
 }) {
   const router = useRouter();
+  const { t } = useI18n();
   const [isPending, setIsPending] = useState(false);
   const [result, setResult] = useState<InteractResult | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -54,7 +56,7 @@ export function Interactable({
       const res = await interactWithObject(id);
       setResult(res);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Nothing happens.");
+      setError(e instanceof Error ? e.message : t.interact.nothingHappens);
     } finally {
       setIsPending(false);
     }

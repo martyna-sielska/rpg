@@ -8,6 +8,7 @@ import { MonsterHotspot } from "@/components/combat/MonsterHotspot";
 import { CombatOverlay } from "@/components/combat/CombatOverlay";
 import { Panel } from "@/components/ui/Panel";
 import { SceneFrame } from "@/components/world/SceneFrame";
+import { useI18n } from "@/lib/i18n/I18nProvider";
 import type { GatheringNode, Interactable as InteractableType, Monster, Player } from "@/lib/game/types";
 
 // Hand-placed against assets/locations/volcano.png. Interactables here span
@@ -66,10 +67,11 @@ export function VolcanoScene({
   potionCount: number;
 }) {
   const [activeMonster, setActiveMonster] = useState<Monster | null>(null);
+  const { t } = useI18n();
 
   return (
     <SceneFrame>
-      <Image src={backgroundImage} alt="Volcano" fill priority unoptimized className="object-cover" />
+      <Image src={backgroundImage} alt={t.sceneAlt.volcano} fill priority unoptimized className="object-cover" />
       <div className="absolute inset-0 bg-orange-950/20" />
 
       {gatheringNodes.map((node) => {
@@ -108,9 +110,7 @@ export function VolcanoScene({
 
       {boss && !bossDefeated && (!chamberReached || !questActive) && (
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2">
-          <Panel className="px-4 py-2 text-center text-xs text-parchment-dark">
-            Heat rolls up from deeper in the volcano. Whatever guards the seal chamber is still out of reach.
-          </Panel>
+          <Panel className="px-4 py-2 text-center text-xs text-parchment-dark">{t.volcano.bossLocked}</Panel>
         </div>
       )}
 

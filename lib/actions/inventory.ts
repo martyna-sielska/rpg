@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { getDictionary } from "@/lib/i18n/getDictionary";
 import type { ConsumableEffect } from "@/lib/game/database.types";
 
 export interface GatherResult {
@@ -11,9 +12,13 @@ export interface GatherResult {
 
 export async function gatherNode(nodeId: string): Promise<GatherResult> {
   const supabase = await createClient();
+  const t = await getDictionary();
   const { data, error } = await supabase.rpc("gather_node", { p_node_id: nodeId });
   const row = data?.[0];
-  if (error || !row) throw new Error(error?.message ?? "Couldn't gather that right now.");
+  if (error || !row) {
+    if (error?.message === "This node has not respawned yet") throw new Error(t.gather.notRespawnedYet);
+    throw new Error(error?.message ?? t.gather.nothingToGather);
+  }
 
   revalidatePath("/inventory");
   return { itemId: row.out_item_id, quantity: row.out_quantity };
@@ -52,14 +57,15 @@ export async function craftRecipe(recipeId: string): Promise<{ itemId: string; q
  * since there's no combat reducer state to reconcile it with afterward. */
 export async function useItemFromInventory(itemId: string): Promise<{ healed: number }> {
   const supabase = await createClient();
+  const t = await getDictionary();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
+  if (!user) throw new Error(t.inventory.errors.notAuthenticated);
 
   const { data: item } = await supabase.from("items").select("consumable_effect").eq("id", itemId).single();
   const effect = (item?.consumable_effect ?? {}) as ConsumableEffect;
-  if (!effect.heal) throw new Error("That item can't be used right now.");
+  if (!effect.heal) throw new Error(t.inventory.errors.cannotUseItem);
 
   const { data: inv } = await supabase
     .from("player_inventory")
@@ -67,7 +73,7 @@ export async function useItemFromInventory(itemId: string): Promise<{ healed: nu
     .eq("player_id", user.id)
     .eq("item_id", itemId)
     .maybeSingle();
-  if (!inv || inv.quantity < 1) throw new Error("You don't have any of that left.");
+  if (!inv || inv.quantity < 1) throw new Error(t.inventory.errors.noneLeft);
 
   if (inv.quantity <= 1) {
     await supabase.from("player_inventory").delete().eq("id", inv.id);
@@ -95,10 +101,11 @@ export async function useItemFromInventory(itemId: string): Promise<{ healed: nu
  */
 export async function useHealingPotion(): Promise<{ healed: number }> {
   const supabase = await createClient();
+  const t = await getDictionary();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
+  if (!user) throw new Error(t.inventory.errors.notAuthenticated);
 
   const { data: inv } = await supabase
     .from("player_inventory")
@@ -107,7 +114,7 @@ export async function useHealingPotion(): Promise<{ healed: number }> {
     .eq("item_id", "healing_potion")
     .maybeSingle();
 
-  if (!inv || inv.quantity < 1) throw new Error("No healing potions left.");
+  if (!inv || inv.quantity < 1) throw new Error(t.inventory.errors.noPotionsLeft);
 
   if (inv.quantity <= 1) {
     await supabase.from("player_inventory").delete().eq("id", inv.id);

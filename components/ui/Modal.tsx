@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { useI18n } from "@/lib/i18n/I18nProvider";
 
 export function Modal({
   open,
@@ -13,6 +14,7 @@ export function Modal({
   title: string;
   children: ReactNode;
 }) {
+  const { t } = useI18n();
   if (!open) return null;
 
   return (
@@ -29,7 +31,7 @@ export function Modal({
           <button
             type="button"
             onClick={onClose}
-            aria-label="Close"
+            aria-label={t.common.close}
             className="text-lg leading-none text-parchment-dark hover:text-parchment"
           >
             ✕

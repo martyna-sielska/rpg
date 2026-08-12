@@ -5,6 +5,7 @@ import { Modal } from "@/components/ui/Modal";
 import { AvatarPicker } from "@/components/auth/AvatarPicker";
 import { Button } from "@/components/ui/Button";
 import { updateAvatar } from "@/lib/actions/player";
+import { useI18n } from "@/lib/i18n/I18nProvider";
 import type { AvatarId } from "@/lib/game/types";
 
 export function ChangeAvatarModal({
@@ -19,6 +20,7 @@ export function ChangeAvatarModal({
   const [avatarId, setAvatarId] = useState<AvatarId>(currentAvatarId);
   const [error, setError] = useState<string>();
   const [isPending, startTransition] = useTransition();
+  const { t } = useI18n();
 
   function handleSave() {
     setError(undefined);
@@ -33,7 +35,7 @@ export function ChangeAvatarModal({
   }
 
   return (
-    <Modal open={open} onClose={onClose} title="Change Hero">
+    <Modal open={open} onClose={onClose} title={t.changeHero.title}>
       <div className="flex flex-col gap-4">
         <AvatarPicker value={avatarId} onChange={setAvatarId} />
         {error && (
@@ -42,7 +44,7 @@ export function ChangeAvatarModal({
           </p>
         )}
         <Button onClick={handleSave} disabled={isPending}>
-          {isPending ? "Saving..." : "Save"}
+          {isPending ? t.common.save : t.common.saveAction}
         </Button>
       </div>
     </Modal>

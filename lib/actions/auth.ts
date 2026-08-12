@@ -3,24 +3,26 @@
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
+import { getDictionary } from "@/lib/i18n/getDictionary";
+import type { Dictionary } from "@/lib/i18n/dictionaries";
 import type { AvatarId } from "@/lib/game/types";
 
 export interface AuthFormState {
   error?: string;
 }
 
-function translateAuthError(message: string): string {
+function translateAuthError(message: string, t: Dictionary): string {
   if (message.includes("Invalid login credentials")) {
-    return "Incorrect email or password.";
+    return t.auth.errors.invalidCredentials;
   }
   if (message.toLowerCase().includes("already registered")) {
-    return "That email is already registered.";
+    return t.auth.errors.alreadyRegistered;
   }
   if (message.toLowerCase().includes("password")) {
-    return "Password must be at least 6 characters.";
+    return t.auth.errors.passwordMinLength;
   }
   if (message.toLowerCase().includes("database error saving new user")) {
-    return "Couldn't create your account — that username may already be taken. Try another.";
+    return t.auth.errors.accountCreateFailed;
   }
   return message;
 }
@@ -29,19 +31,20 @@ export async function signUp(
   _prevState: AuthFormState,
   formData: FormData
 ): Promise<AuthFormState> {
+  const t = await getDictionary();
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
   const username = String(formData.get("username") ?? "").trim();
   const avatarId = String(formData.get("avatar_id") ?? "") as AvatarId;
 
   if (!email || !password || !username || !avatarId) {
-    return { error: "Fill in every field and choose a hero." };
+    return { error: t.auth.errors.fillFields };
   }
   if (password.length < 6) {
-    return { error: "Password must be at least 6 characters." };
+    return { error: t.auth.errors.passwordMinLength };
   }
   if (username.length < 3 || username.length > 20) {
-    return { error: "Username must be 3–20 characters." };
+    return { error: t.auth.errors.usernameLength };
   }
 
   const supabase = await createClient();
@@ -52,7 +55,7 @@ export async function signUp(
   });
 
   if (error) {
-    return { error: translateAuthError(error.message) };
+    return { error: translateAuthError(error.message, t) };
   }
 
   redirect("/world-map");
@@ -62,18 +65,19 @@ export async function signIn(
   _prevState: AuthFormState,
   formData: FormData
 ): Promise<AuthFormState> {
+  const t = await getDictionary();
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
 
   if (!email || !password) {
-    return { error: "Enter your email and password." };
+    return { error: t.auth.errors.enterEmailPassword };
   }
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
-    return { error: translateAuthError(error.message) };
+    return { error: translateAuthError(error.message, t) };
   }
 
   redirect("/world-map");

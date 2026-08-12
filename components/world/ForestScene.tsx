@@ -8,6 +8,7 @@ import { CombatOverlay } from "@/components/combat/CombatOverlay";
 import { DayNightOverlay } from "@/components/world/DayNightOverlay";
 import { Interactable } from "@/components/world/Interactable";
 import { SceneFrame } from "@/components/world/SceneFrame";
+import { useI18n } from "@/lib/i18n/I18nProvider";
 import type { GatheringNode, Interactable as InteractableType, Monster, Player } from "@/lib/game/types";
 
 // Hand-placed against assets/forest.png (crystal cluster + treasure chest
@@ -58,10 +59,11 @@ export function ForestScene({
   potionCount: number;
 }) {
   const [activeMonster, setActiveMonster] = useState<Monster | null>(null);
+  const { t } = useI18n();
 
   return (
     <SceneFrame>
-      <Image src={backgroundImage} alt="Enchanted Forest" fill priority unoptimized className="object-cover" />
+      <Image src={backgroundImage} alt={t.sceneAlt.forest} fill priority unoptimized className="object-cover" />
       <div className="absolute inset-0 bg-black/10" />
       <DayNightOverlay />
 

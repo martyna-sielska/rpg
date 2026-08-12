@@ -3,13 +3,20 @@ import { createClient } from "@/lib/supabase/server";
 import { getCurrentPlayer } from "@/lib/game/data";
 import { PlayerCardWithEdit } from "@/components/player/PlayerCardWithEdit";
 import { EquipmentSlots } from "@/components/inventory/EquipmentSlots";
+import { dictionaries } from "@/lib/i18n/dictionaries";
+import { getLocale } from "@/lib/i18n/locale";
+import { localize } from "@/lib/i18n/localize";
 import type { Item } from "@/lib/game/types";
 
-export const metadata: Metadata = { title: "Character — Wonderhill" };
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  return { title: dictionaries[locale].meta.character };
+}
 
 export default async function CharacterPage() {
   const player = await getCurrentPlayer();
   const supabase = await createClient();
+  const locale = await getLocale();
 
   const { data: equipment } = await supabase.from("player_equipment").select("*").eq("player_id", player.id).maybeSingle();
 
@@ -22,7 +29,7 @@ export default async function CharacterPage() {
   );
   if (equippedIds.length > 0) {
     const { data: items } = await supabase.from("items").select("*").in("id", equippedIds);
-    const byId = new Map((items ?? []).map((i) => [i.id, i]));
+    const byId = new Map((items ?? []).map((i) => [i.id, localize(i, locale, ["name", "description"])]));
     weapon = equipment?.weapon_item_id ? (byId.get(equipment.weapon_item_id) ?? null) : null;
     armor = equipment?.armor_item_id ? (byId.get(equipment.armor_item_id) ?? null) : null;
     trinket = equipment?.trinket_item_id ? (byId.get(equipment.trinket_item_id) ?? null) : null;

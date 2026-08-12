@@ -7,6 +7,7 @@ import { MonsterHotspot } from "@/components/combat/MonsterHotspot";
 import { CombatOverlay } from "@/components/combat/CombatOverlay";
 import { Panel } from "@/components/ui/Panel";
 import { SceneFrame } from "@/components/world/SceneFrame";
+import { useI18n } from "@/lib/i18n/I18nProvider";
 import type { Interactable as InteractableType, Monster, Player } from "@/lib/game/types";
 
 // Hand-placed against assets/locations/dungeon.png — the miniboss guards
@@ -44,10 +45,11 @@ export function DungeonScene({
   potionCount: number;
 }) {
   const [activeMonster, setActiveMonster] = useState<Monster | null>(null);
+  const { t } = useI18n();
 
   return (
     <SceneFrame>
-      <Image src={backgroundImage} alt="Forest Dungeon" fill priority unoptimized className="object-cover" />
+      <Image src={backgroundImage} alt={t.sceneAlt.dungeon} fill priority unoptimized className="object-cover" />
       <div className="absolute inset-0 bg-black/25" />
 
       {interactables.map((obj) => {
@@ -82,17 +84,13 @@ export function DungeonScene({
 
       {boss && !bossDefeated && !minibossDefeated && (
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2">
-          <Panel className="px-4 py-2 text-center text-xs text-parchment-dark">
-            Something deeper in the ruins stirs — but the Bramble Warden blocks the way.
-          </Panel>
+          <Panel className="px-4 py-2 text-center text-xs text-parchment-dark">{t.dungeon.minibossBlocking}</Panel>
         </div>
       )}
 
       {minibossDefeated && bossDefeated && (
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2">
-          <Panel className="px-4 py-2 text-center text-xs text-parchment-dark">
-            The ruins have gone quiet. You've cleared this place — for now.
-          </Panel>
+          <Panel className="px-4 py-2 text-center text-xs text-parchment-dark">{t.dungeon.cleared}</Panel>
         </div>
       )}
 

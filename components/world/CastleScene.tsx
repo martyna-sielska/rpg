@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { Interactable } from "@/components/world/Interactable";
 import { SceneFrame } from "@/components/world/SceneFrame";
+import { useI18n } from "@/lib/i18n/I18nProvider";
 import type { Interactable as InteractableType } from "@/lib/game/types";
 
 // Hand-placed against assets/locations/castle_archive.png — the full,
@@ -31,9 +32,10 @@ export function CastleScene({
   backgroundImage: string;
   interactables: InteractableType[];
 }) {
+  const { t } = useI18n();
   return (
     <SceneFrame>
-      <Image src={backgroundImage} alt="The Castle Archive" fill priority unoptimized className="object-cover" />
+      <Image src={backgroundImage} alt={t.sceneAlt.castle} fill priority unoptimized className="object-cover" />
       <div className="absolute inset-0 bg-black/10" />
 
       {interactables.map((obj) => {

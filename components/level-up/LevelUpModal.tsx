@@ -1,5 +1,7 @@
 "use client";
 
+import { useI18n } from "@/lib/i18n/I18nProvider";
+
 export function LevelUpModal({
   level,
   onClose,
@@ -7,6 +9,7 @@ export function LevelUpModal({
   level: number | null;
   onClose: () => void;
 }) {
+  const { t } = useI18n();
   if (level == null) return null;
 
   return (
@@ -19,15 +22,15 @@ export function LevelUpModal({
         onClick={(e) => e.stopPropagation()}
       >
         <p className="font-pixel text-3xl text-gold drop-shadow-[0_2px_0_rgba(0,0,0,0.6)] sm:text-4xl">
-          LEVEL UP!
+          {t.levelUp.title}
         </p>
-        <p className="text-parchment">You reached level {level}</p>
+        <p className="text-parchment">{t.levelUp.reached(level)}</p>
         <button
           type="button"
           onClick={onClose}
           className="mt-2 rounded-lg border-b-4 border-gold-light bg-gold px-5 py-2 font-pixel text-sm text-ink hover:bg-gold-light"
         >
-          Nice!
+          {t.common.nice}
         </button>
       </div>
     </div>
