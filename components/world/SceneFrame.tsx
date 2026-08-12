@@ -17,15 +17,6 @@ function getFullscreenElement() {
   return doc.fullscreenElement ?? doc.webkitFullscreenElement ?? null;
 }
 
-// iOS Safari has no Fullscreen API for non-<video> elements at all — not even
-// behind a vendor prefix — so requestFullscreen is simply absent from the
-// element there. Detect that up front and fall back to a CSS-only overlay
-// that fills the visual viewport instead of silently doing nothing.
-function isNativeFullscreenSupported() {
-  const el = document.documentElement as FullscreenElement;
-  return Boolean(el.requestFullscreen ?? el.webkitRequestFullscreen);
-}
-
 // Every location background is 1264x843 (or map2.png's equivalent 1536x1024)
 // — a fixed ~3:2 aspect ratio. This wrapper locks the scene box to that same
 // ratio and fits it entirely inside the viewport (letterboxed/pillarboxed as
@@ -40,12 +31,6 @@ function isNativeFullscreenSupported() {
 export function SceneFrame({ children }: { children: ReactNode }) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [supportsNativeFullscreen, setSupportsNativeFullscreen] = useState(true);
-  const [fallbackFullscreen, setFallbackFullscreen] = useState(false);
-
-  useEffect(() => {
-    setSupportsNativeFullscreen(isNativeFullscreenSupported());
-  }, []);
 
   useEffect(() => {
     function handleChange() {
@@ -59,22 +44,7 @@ export function SceneFrame({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  // The CSS fallback has no browser-level exit affordance (there's no real
-  // fullscreen to leave), so lock page scroll ourselves while it's active.
-  useEffect(() => {
-    if (!fallbackFullscreen) return;
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = previousOverflow;
-    };
-  }, [fallbackFullscreen]);
-
   async function toggleFullscreen() {
-    if (!supportsNativeFullscreen) {
-      setFallbackFullscreen((active) => !active);
-      return;
-    }
     const doc = document as FullscreenDocument;
     if (getFullscreenElement()) {
       if (doc.exitFullscreen) await doc.exitFullscreen();
@@ -87,17 +57,8 @@ export function SceneFrame({ children }: { children: ReactNode }) {
     else if (el.webkitRequestFullscreen) await el.webkitRequestFullscreen();
   }
 
-  const showFullscreen = supportsNativeFullscreen ? isFullscreen : fallbackFullscreen;
-
   return (
-    <div
-      ref={wrapperRef}
-      className={
-        fallbackFullscreen
-          ? "fixed inset-0 z-40 flex h-[100dvh] w-full items-center justify-center bg-wood-darkest"
-          : "flex min-h-screen w-full items-center justify-center bg-wood-darkest"
-      }
-    >
+    <div ref={wrapperRef} className="flex min-h-screen w-full items-center justify-center bg-wood-darkest">
       <div className="relative aspect-[3/2] h-[min(100vh,66.667vw)] w-[min(100vw,150vh)] overflow-hidden border-4 border-wood-dark shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_8px_24px_rgba(0,0,0,0.5)]">
         {children}
       </div>
@@ -108,11 +69,11 @@ export function SceneFrame({ children }: { children: ReactNode }) {
       <button
         type="button"
         onClick={toggleFullscreen}
-        aria-label={showFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
-        title={showFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+        aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+        title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
         className="fixed bottom-3 right-3 z-50 flex h-8 w-8 items-center justify-center rounded-md border-2 border-wood-dark bg-wood-darkest/80 text-parchment shadow-[0_2px_8px_rgba(0,0,0,0.5)] transition hover:bg-wood-darkest"
       >
-        {showFullscreen ? (
+        {isFullscreen ? (
           <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2}>
             <path d="M9 3v4a2 2 0 0 1-2 2H3M21 9h-4a2 2 0 0 1-2-2V3M3 15h4a2 2 0 0 1 2 2v4M15 21v-4a2 2 0 0 1 2-2h4" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
