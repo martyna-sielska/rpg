@@ -110,6 +110,8 @@ export const en = {
   fullscreen: {
     enter: "Enter fullscreen",
     exit: "Exit fullscreen",
+    unsupportedHint:
+      "iPhone doesn't let websites hide the address bar. For fullscreen play, add this site to your home screen (Share → Add to Home Screen).",
   },
 
   dayNight: {

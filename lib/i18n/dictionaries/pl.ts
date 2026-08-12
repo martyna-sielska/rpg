@@ -112,6 +112,8 @@ export const pl: Dictionary = {
   fullscreen: {
     enter: "Włącz pełny ekran",
     exit: "Wyłącz pełny ekran",
+    unsupportedHint:
+      "iPhone nie pozwala stronom internetowym chować paska adresu. Aby grać w pełnym ekranie, dodaj tę stronę do ekranu głównego (Udostępnij → Dodaj do ekranu głównego).",
   },
 
   dayNight: {

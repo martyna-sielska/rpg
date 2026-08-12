@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Pixelify_Sans } from "next/font/google";
 import { getLocale } from "@/lib/i18n/locale";
 import { dictionaries } from "@/lib/i18n/dictionaries";
@@ -26,8 +26,26 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: "Magaly",
     description: dictionaries[locale].landing.tagline,
+    // iOS Safari has no JS-triggerable fullscreen at all (see SceneFrame's
+    // toggle) — the only way to get a chrome-free view there is launching
+    // from a home-screen icon, which these tags opt into. `appleWebApp`
+    // only emits the modern `mobile-web-app-capable` tag; `other` adds the
+    // legacy `apple-mobile-web-app-*` names older iOS Safari still checks.
+    appleWebApp: {
+      title: "Magaly",
+      statusBarStyle: "black-translucent",
+    },
+    other: {
+      "apple-mobile-web-app-capable": "yes",
+      "apple-mobile-web-app-status-bar-style": "black-translucent",
+    },
   };
 }
+
+export const viewport: Viewport = {
+  themeColor: "#1c130c",
+  viewportFit: "cover",
+};
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const locale = await getLocale();
