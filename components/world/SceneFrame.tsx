@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 // Fullscreen requires vendor-prefixed fallbacks on some browsers (notably
 // Safari, which still ships only the webkit-prefixed Fullscreen API).
@@ -24,17 +24,15 @@ function getFullscreenElement() {
 // aspect happens to be. The min()-based sizing is the standard CSS-only
 // "fit a fixed-ratio box inside a variable viewport" formula: 150vh = 100vh
 // scaled by the 3/2 ratio, 66.667vw = 100vw divided by it. Because it's
-// viewport-unit driven, it keeps fitting correctly when the wrapper itself
-// is put into fullscreen (the browser fullscreen viewport is what vh/vw
-// resolve against), so the fullscreen toggle below needs no extra sizing
-// logic of its own.
+// viewport-unit driven, it keeps fitting correctly when the page goes
+// fullscreen (the browser fullscreen viewport is what vh/vw resolve
+// against), so the fullscreen toggle below needs no extra sizing logic.
 export function SceneFrame({ children }: { children: ReactNode }) {
-  const wrapperRef = useRef<HTMLDivElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   useEffect(() => {
     function handleChange() {
-      setIsFullscreen(getFullscreenElement() === wrapperRef.current);
+      setIsFullscreen(getFullscreenElement() === document.documentElement);
     }
     document.addEventListener("fullscreenchange", handleChange);
     document.addEventListener("webkitfullscreenchange", handleChange);
@@ -51,14 +49,17 @@ export function SceneFrame({ children }: { children: ReactNode }) {
       else if (doc.webkitExitFullscreen) await doc.webkitExitFullscreen();
       return;
     }
-    const el = wrapperRef.current as FullscreenElement | null;
-    if (!el) return;
+    // Fullscreen the whole page (not just this wrapper) so the HUD — which
+    // lives outside this component, as a sibling in the game layout — stays
+    // visible instead of vanishing along with everything else the browser
+    // excludes from a narrower fullscreen target.
+    const el = document.documentElement as FullscreenElement;
     if (el.requestFullscreen) await el.requestFullscreen();
     else if (el.webkitRequestFullscreen) await el.webkitRequestFullscreen();
   }
 
   return (
-    <div ref={wrapperRef} className="flex min-h-screen w-full items-center justify-center bg-wood-darkest">
+    <div className="flex min-h-screen w-full items-center justify-center bg-wood-darkest">
       <div className="relative aspect-[3/2] h-[min(100vh,66.667vw)] w-[min(100vw,150vh)] overflow-hidden border-4 border-wood-dark shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_8px_24px_rgba(0,0,0,0.5)]">
         {children}
       </div>
