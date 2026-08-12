@@ -14,11 +14,12 @@ export default async function DungeonPage() {
   const player = await getCurrentPlayer();
   const supabase = await createClient();
 
-  const [{ data: location }, { data: monsters }, { data: bossState }, { data: equipment }, { data: potionRow }] =
+  const [{ data: location }, { data: monsters }, { data: bossState }, { data: interactables }, { data: equipment }, { data: potionRow }] =
     await Promise.all([
       supabase.from("locations").select("*").eq("id", "dungeon_ruins").single(),
       supabase.from("monsters").select("*").eq("location_id", "dungeon_ruins").in("tier", ["miniboss", "boss"]),
       supabase.from("player_boss_state").select("*").eq("player_id", player.id),
+      supabase.from("interactables").select("*").eq("location_id", "dungeon_ruins"),
       supabase.from("player_equipment").select("*").eq("player_id", player.id).maybeSingle(),
       supabase.from("player_inventory").select("quantity").eq("player_id", player.id).eq("item_id", "healing_potion").maybeSingle(),
     ]);
@@ -37,6 +38,7 @@ export default async function DungeonPage() {
   return (
     <DungeonScene
       backgroundImage={location?.background_image ?? "/assets/locations/dungeon.png"}
+      interactables={interactables ?? []}
       miniboss={miniboss}
       boss={boss}
       minibossDefeated={minibossDefeated}

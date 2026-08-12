@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { Interactable } from "@/components/world/Interactable";
+import { SceneFrame } from "@/components/world/SceneFrame";
 import type { Interactable as InteractableType } from "@/lib/game/types";
 
 // The Hollow reuses the Forest Dungeon's background art (the only moody
@@ -21,7 +22,7 @@ export function HollowScene({
   interactables: InteractableType[];
 }) {
   return (
-    <div className="relative min-h-screen w-full overflow-hidden">
+    <SceneFrame>
       <Image
         src={backgroundImage}
         alt="The Hollow"
@@ -38,6 +39,6 @@ export function HollowScene({
         if (!pos) return null;
         return <Interactable key={obj.id} id={obj.id} name={obj.name} mapX={pos.x} mapY={pos.y} />;
       })}
-    </div>
+    </SceneFrame>
   );
 }

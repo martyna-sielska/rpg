@@ -6,6 +6,7 @@ import { NpcSprite } from "@/components/npc/NpcSprite";
 import { DialogueOverlay } from "@/components/npc/DialogueOverlay";
 import { Interactable } from "@/components/world/Interactable";
 import { DayNightOverlay } from "@/components/world/DayNightOverlay";
+import { SceneFrame } from "@/components/world/SceneFrame";
 import type { Interactable as InteractableType, Npc } from "@/lib/game/types";
 
 // Hand-placed against assets/locations/magic_tower.png.
@@ -28,7 +29,7 @@ export function MagicTowerScene({
   const [talkingToScholar, setTalkingToScholar] = useState(false);
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden">
+    <SceneFrame>
       <Image src={backgroundImage} alt="Magic Tower" fill priority unoptimized className="object-cover" />
       <div className="absolute inset-0 bg-black/20" />
       <DayNightOverlay />
@@ -53,6 +54,6 @@ export function MagicTowerScene({
       {talkingToScholar && scholar && (
         <DialogueOverlay npcId={scholar.id} portraitImage={scholar.portrait_image} onClose={() => setTalkingToScholar(false)} />
       )}
-    </div>
+    </SceneFrame>
   );
 }

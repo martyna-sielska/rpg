@@ -6,6 +6,7 @@ import { NpcSprite } from "@/components/npc/NpcSprite";
 import { DialogueOverlay } from "@/components/npc/DialogueOverlay";
 import { DayNightOverlay } from "@/components/world/DayNightOverlay";
 import { Interactable } from "@/components/world/Interactable";
+import { SceneFrame } from "@/components/world/SceneFrame";
 import { useDayPhase } from "@/lib/game/useDayPhase";
 import type { Interactable as InteractableType, Npc } from "@/lib/game/types";
 
@@ -59,7 +60,7 @@ export function VillageScene({
   const activeNpc = npcs.find((npc) => npc.id === activeNpcId) ?? null;
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden">
+    <SceneFrame>
       <Image src={backgroundImage} alt="Village" fill priority unoptimized className="object-cover" />
       <div className="absolute inset-0 bg-black/10" />
       <DayNightOverlay />
@@ -108,6 +109,6 @@ export function VillageScene({
       {activeNpc && (
         <DialogueOverlay npcId={activeNpc.id} portraitImage={activeNpc.portrait_image} onClose={() => setActiveNpcId(null)} />
       )}
-    </div>
+    </SceneFrame>
   );
 }

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { restAtHome } from "@/lib/actions/home";
 import { DayNightOverlay } from "@/components/world/DayNightOverlay";
+import { SceneFrame } from "@/components/world/SceneFrame";
 
 // Hand-placed against assets/house.png (bed bottom-left, chest at its foot,
 // crafting table center, world-map painting on the wall) — same hardcoded
@@ -35,7 +36,7 @@ export function HomeScene({ backgroundImage }: { backgroundImage: string }) {
   }
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden">
+    <SceneFrame>
       <Image src={backgroundImage} alt="Home" fill priority unoptimized className="object-cover" />
       <div className="absolute inset-0 bg-black/10" />
       <DayNightOverlay />
@@ -89,6 +90,6 @@ export function HomeScene({ backgroundImage }: { backgroundImage: string }) {
           </div>
         </div>
       )}
-    </div>
+    </SceneFrame>
   );
 }

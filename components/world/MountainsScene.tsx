@@ -7,6 +7,7 @@ import { Interactable } from "@/components/world/Interactable";
 import { MonsterHotspot } from "@/components/combat/MonsterHotspot";
 import { CombatOverlay } from "@/components/combat/CombatOverlay";
 import { Panel } from "@/components/ui/Panel";
+import { SceneFrame } from "@/components/world/SceneFrame";
 import type { GatheringNode, Interactable as InteractableType, Monster, Player } from "@/lib/game/types";
 
 // Hand-placed against assets/locations/mountains.png. The mine is the big
@@ -19,6 +20,7 @@ const GATHER_POSITIONS: Record<string, { x: number; y: number }> = {
 };
 
 const INTERACTABLE_POSITIONS: Record<string, { x: number; y: number }> = {
+  mountains_old_mine_memory: { x: 74, y: 33 },
   mountains_mine_entrance: { x: 82, y: 27 },
   mountains_chamber_entrance: { x: 90, y: 35 },
   mountains_puzzle_rune_1: { x: 86, y: 43 },
@@ -60,7 +62,7 @@ export function MountainsScene({
   const [activeMonster, setActiveMonster] = useState<Monster | null>(null);
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden">
+    <SceneFrame>
       <Image src={backgroundImage} alt="Frost Mountains" fill priority unoptimized className="object-cover" />
       <div className="absolute inset-0 bg-blue-950/20" />
 
@@ -116,6 +118,6 @@ export function MountainsScene({
           onClose={() => setActiveMonster(null)}
         />
       )}
-    </div>
+    </SceneFrame>
   );
 }

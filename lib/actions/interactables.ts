@@ -7,6 +7,7 @@ export interface InteractResult {
   lines: string[];
   grantedItemId: string | null;
   grantedItemQty: number;
+  grantedItemIcon: string | null;
 }
 
 /**
@@ -23,9 +24,16 @@ export async function interactWithObject(id: string): Promise<InteractResult> {
   revalidatePath("/quests");
   revalidatePath("/inventory");
 
+  let grantedItemIcon: string | null = null;
+  if (row.out_granted_item_id) {
+    const { data: item } = await supabase.from("items").select("icon_image").eq("id", row.out_granted_item_id).single();
+    grantedItemIcon = item?.icon_image ?? null;
+  }
+
   return {
     lines: row.out_lines,
     grantedItemId: row.out_granted_item_id,
     grantedItemQty: row.out_granted_item_qty,
+    grantedItemIcon,
   };
 }

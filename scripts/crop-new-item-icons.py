@@ -98,7 +98,7 @@ def tight_crop(img, pad=4):
 BOXES = {
     "ancient_gate_fragment": (859, 430, 943, 525),  # icy-blue crystal cluster
     "broken_crystal": (755, 430, 844, 526),  # purple crystal cluster
-    "ancient_key": (948, 555, 999, 635),  # single gold key
+    "ancient_key": (943, 529, 1001, 633),  # single gold key — was cropped too tight up top, clipping the bow
 }
 
 sheet = Image.open(f"{ROOT}/assets/items.png").convert("RGBA")

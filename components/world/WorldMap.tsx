@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useDayPhase } from "@/lib/game/useDayPhase";
+import { SceneFrame } from "@/components/world/SceneFrame";
 import type { Location, PlayerLocation } from "@/lib/game/types";
 
 const LOCATION_ROUTE: Record<string, string> = {
@@ -29,13 +30,22 @@ const HIDDEN_FROM_MAP = new Set(["hollow"]);
 // Clickable regions hand-placed directly over the matching art in
 // assets/map2.png (percent of the 1536x1024 image) — the leftmost cottage
 // for Home, the fountain-square cluster for Village, the wooded clearing
-// for Forest, the ruin archway for the Dungeon. No visible pin/badge for
-// these; the art itself is the hit target (see the hover highlight below).
+// for Forest, the ruin archway for the Dungeon, and so on for every other
+// landmark. No visible pin/badge for these; the art itself is the hit
+// target (see the hover highlight below). Rects are trimmed to avoid
+// overlapping their neighbors' art (e.g. the lake's left/top edges are
+// pulled back from the village forge and the castle cliff).
 const HOTSPOT_RECTS: Record<string, { left: number; top: number; width: number; height: number }> = {
   home: { left: 2.0, top: 47.4, width: 19.5, height: 22.5 },
   village: { left: 22.8, top: 48.3, width: 39.7, height: 36.6 },
   forest: { left: 19.5, top: 9.8, width: 29.3, height: 29.3 },
   dungeon_ruins: { left: 49.5, top: 2.9, width: 15.0, height: 18.6 },
+  lake: { left: 45.6, top: 45.4, width: 20.2, height: 18.6 },
+  castle: { left: 50.8, top: 22.0, width: 26.0, height: 23.0 },
+  mountains: { left: 78.1, top: 0, width: 21.9, height: 14.2 },
+  volcano: { left: 82.7, top: 28.3, width: 17.3, height: 30.3 },
+  magic_tower: { left: 2.6, top: 0, width: 11.1, height: 29.3 },
+  ancient_ruins: { left: 77.5, top: 14.2, width: 15.0, height: 13.7 },
 };
 
 export function WorldMap({
@@ -50,7 +60,7 @@ export function WorldMap({
   const phase = useDayPhase();
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden">
+    <SceneFrame>
       <Image
         src="/assets/map2.png"
         alt="World map"
@@ -91,8 +101,8 @@ export function WorldMap({
           );
         }
 
-        // Unlocked landmarks without a hand-placed hotspot rect (everything
-        // beyond home/village/forest/dungeon) still get a clickable point pin.
+        // Fallback for any unlocked, routed location that doesn't (yet) have
+        // a hand-placed hotspot rect above — still a clickable point pin.
         if (unlocked && route) {
           return (
             <Link
@@ -123,10 +133,10 @@ export function WorldMap({
             style={{ left: `${location.map_x}%`, top: `${location.map_y}%` }}
           >
             <div
-              className="flex cursor-not-allowed flex-col items-center gap-1 rounded-full border-4 border-wood-dark bg-wood-darkest/80 p-2 text-2xl text-parchment-dark/60 shadow-[0_6px_16px_rgba(0,0,0,0.5)]"
+              className="flex h-10 w-10 cursor-not-allowed items-center justify-center rounded-full border-4 border-wood-dark bg-wood-darkest/80 p-1 opacity-60 shadow-[0_6px_16px_rgba(0,0,0,0.5)]"
               title={location.unlock_hint ?? "Locked"}
             >
-              <span aria-hidden>🔒</span>
+              <Image src="/assets/items/locked_location_padlock.png" alt="" aria-hidden width={32} height={32} unoptimized className="h-full w-full object-contain" />
             </div>
             <div className="pointer-events-none absolute left-1/2 top-full mt-1 -translate-x-1/2 whitespace-nowrap rounded-md border-2 border-wood-dark bg-wood-darkest/90 px-2 py-0.5 text-[10px] font-semibold text-parchment opacity-0 shadow-lg transition group-hover:opacity-100">
               {location.name}
@@ -134,6 +144,6 @@ export function WorldMap({
           </div>
         );
       })}
-    </div>
+    </SceneFrame>
   );
 }

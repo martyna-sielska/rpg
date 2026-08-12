@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { Interactable } from "@/components/world/Interactable";
 import { MonsterHotspot } from "@/components/combat/MonsterHotspot";
 import { CombatOverlay } from "@/components/combat/CombatOverlay";
 import { Panel } from "@/components/ui/Panel";
-import type { Monster, Player } from "@/lib/game/types";
+import { SceneFrame } from "@/components/world/SceneFrame";
+import type { Interactable as InteractableType, Monster, Player } from "@/lib/game/types";
 
 // Hand-placed against assets/locations/dungeon.png — the miniboss guards
 // the locked door area, the boss waits in the rune-circle room deeper in.
@@ -14,8 +16,13 @@ const MONSTER_POSITIONS: Record<string, { x: number; y: number }> = {
   fading_shadow: { x: 88, y: 78 },
 };
 
+const INTERACTABLE_POSITIONS: Record<string, { x: number; y: number }> = {
+  dungeon_mira_connection: { x: 30, y: 55 },
+};
+
 export function DungeonScene({
   backgroundImage,
+  interactables,
   miniboss,
   boss,
   minibossDefeated,
@@ -26,6 +33,7 @@ export function DungeonScene({
   potionCount,
 }: {
   backgroundImage: string;
+  interactables: InteractableType[];
   miniboss: Monster | null;
   boss: Monster | null;
   minibossDefeated: boolean;
@@ -38,9 +46,15 @@ export function DungeonScene({
   const [activeMonster, setActiveMonster] = useState<Monster | null>(null);
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden">
+    <SceneFrame>
       <Image src={backgroundImage} alt="Forest Dungeon" fill priority unoptimized className="object-cover" />
       <div className="absolute inset-0 bg-black/25" />
+
+      {interactables.map((obj) => {
+        const pos = INTERACTABLE_POSITIONS[obj.id];
+        if (!pos) return null;
+        return <Interactable key={obj.id} id={obj.id} name={obj.name} mapX={pos.x} mapY={pos.y} />;
+      })}
 
       {miniboss && !minibossDefeated && (
         <MonsterHotspot
@@ -92,6 +106,6 @@ export function DungeonScene({
           onClose={() => setActiveMonster(null)}
         />
       )}
-    </div>
+    </SceneFrame>
   );
 }

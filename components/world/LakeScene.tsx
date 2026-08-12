@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { Interactable } from "@/components/world/Interactable";
 import { DayNightOverlay } from "@/components/world/DayNightOverlay";
+import { SceneFrame } from "@/components/world/SceneFrame";
 import type { Interactable as InteractableType } from "@/lib/game/types";
 
 // Hand-placed against assets/locations/lake.png — matches the map_x/map_y
@@ -24,7 +25,7 @@ export function LakeScene({
   interactables: InteractableType[];
 }) {
   return (
-    <div className="relative min-h-screen w-full overflow-hidden">
+    <SceneFrame>
       <Image src={backgroundImage} alt="Magic Lake" fill priority unoptimized className="object-cover" />
       <div className="absolute inset-0 bg-black/10" />
       <DayNightOverlay />
@@ -34,6 +35,6 @@ export function LakeScene({
         if (!pos) return null;
         return <Interactable key={obj.id} id={obj.id} name={obj.name} mapX={pos.x} mapY={pos.y} />;
       })}
-    </div>
+    </SceneFrame>
   );
 }

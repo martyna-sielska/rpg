@@ -10,6 +10,7 @@ export interface QuestTurnInResult {
   leveledUp: boolean;
   rewardItemId: string | null;
   rewardItemQty: number;
+  rewardItemIcon: string | null;
 }
 
 export async function completeQuestTurnIn(questId: string): Promise<QuestTurnInResult> {
@@ -21,6 +22,12 @@ export async function completeQuestTurnIn(questId: string): Promise<QuestTurnInR
   revalidatePath("/quests");
   revalidatePath("/character");
 
+  let rewardItemIcon: string | null = null;
+  if (row.reward_item_id) {
+    const { data: item } = await supabase.from("items").select("icon_image").eq("id", row.reward_item_id).single();
+    rewardItemIcon = item?.icon_image ?? null;
+  }
+
   return {
     newLevel: row.new_level,
     newXp: row.new_xp,
@@ -28,5 +35,6 @@ export async function completeQuestTurnIn(questId: string): Promise<QuestTurnInR
     leveledUp: row.leveled_up,
     rewardItemId: row.reward_item_id,
     rewardItemQty: row.reward_item_qty,
+    rewardItemIcon,
   };
 }

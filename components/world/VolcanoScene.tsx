@@ -7,6 +7,7 @@ import { Interactable } from "@/components/world/Interactable";
 import { MonsterHotspot } from "@/components/combat/MonsterHotspot";
 import { CombatOverlay } from "@/components/combat/CombatOverlay";
 import { Panel } from "@/components/ui/Panel";
+import { SceneFrame } from "@/components/world/SceneFrame";
 import type { GatheringNode, Interactable as InteractableType, Monster, Player } from "@/lib/game/types";
 
 // Hand-placed against assets/locations/volcano.png. Interactables here span
@@ -23,8 +24,8 @@ const INTERACTABLE_POSITIONS: Record<string, { x: number; y: number }> = {
   volcano_deep_ruins: { x: 72, y: 26 },
   volcano_recent_visitor: { x: 40, y: 22 },
   volcano_interference: { x: 56, y: 18 },
-  volcano_seal_chamber: { x: 80, y: 16 },
-  volcano_recover_third_seal: { x: 86, y: 12 },
+  volcano_seal_chamber: { x: 76, y: 20 },
+  volcano_recover_third_seal: { x: 82, y: 16 },
 };
 
 const BOSS_POSITION = { x: 82, y: 14 };
@@ -67,7 +68,7 @@ export function VolcanoScene({
   const [activeMonster, setActiveMonster] = useState<Monster | null>(null);
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden">
+    <SceneFrame>
       <Image src={backgroundImage} alt="Volcano" fill priority unoptimized className="object-cover" />
       <div className="absolute inset-0 bg-orange-950/20" />
 
@@ -123,6 +124,6 @@ export function VolcanoScene({
           onClose={() => setActiveMonster(null)}
         />
       )}
-    </div>
+    </SceneFrame>
   );
 }

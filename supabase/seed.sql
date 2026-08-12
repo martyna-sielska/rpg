@@ -12,9 +12,11 @@
 
 -- map_x/map_y below are pixel-measured against assets/map2.png (1536x1024):
 -- water-centroid sampling for the lake, snow-centroid sampling for the
--- mountains, grid-overlay crops read by eye for the rest. home/village/forest
--- are area hotspots (see HOTSPOT_RECTS in WorldMap.tsx) so their map_x/map_y
--- here is only a fallback and kept aligned to that rect's center.
+-- mountains, grid-overlay crops read by eye for the rest. Every unlocked,
+-- routed location is rendered as an area hotspot (see HOTSPOT_RECTS in
+-- WorldMap.tsx) so map_x/map_y here is only a fallback pin position (used
+-- while locked, or for any future location without a hand-placed rect) and
+-- kept roughly aligned to that rect's center.
 insert into public.locations (id, name, description, background_image, map_x, map_y, region_kind, is_implemented, unlock_hint, sort_order) values
   ('home', 'Home', 'A small, cozy home at the edge of the village. Rest here to recover, and craft with what you''ve gathered.', '/assets/locations/home.png', 12, 59, 'home', true, null, 0),
   ('village', 'Magic Hill', 'A quiet village on the edge of a mysterious forest. Lately, the magic that has always watched over it seems to be fading.', '/assets/locations/village.png', 43, 67, 'settlement', true, null, 1),
@@ -508,19 +510,20 @@ on conflict (id) do update set
 -- New items: the three ancient seals + the Veil Key (unique quest items,
 -- same convention as ancient_key/broken_crystal: stack_max 1, sell_value 0),
 -- plus a handful of gathering materials for the Forge Materials quest.
--- Icons reuse crystal_shard.png as a placeholder (no dedicated art cropped
--- for these yet) — swap in dedicated icons later.
+-- Icons cropped from assets/items2.png via scripts/crop-items2-icons.py.
+-- glacier_moss has no dedicated art in that sheet, so it keeps the
+-- crystal_shard.png placeholder.
 -- =========================================================
 
 insert into public.items (id, name, description, item_type, icon_image, equip_slot, stack_max, sell_value, stat_bonus, consumable_effect) values
-  ('ancient_seal', 'Ancient Seal', 'A disc of dark, water-worn stone pulled from beneath Magic Lake. It hums faintly, out of rhythm with everything else you''ve found. You don''t yet know what it does.', 'quest', '/assets/items/crystal_shard.png', null, 1, 0, '{}', '{}'),
-  ('second_seal', 'The Second Seal', 'Recovered from a sealed chamber deep in the Frost Mountains. The moment it left its chamber, the drain on the world''s magic grew worse, not better.', 'quest', '/assets/items/crystal_shard.png', null, 1, 0, '{}', '{}'),
-  ('third_seal', 'The Third Seal', 'Recovered from the ruins deep within the volcano. Someone else had been there recently — and left in a hurry.', 'quest', '/assets/items/crystal_shard.png', null, 1, 0, '{}', '{}'),
-  ('veil_key', 'The Veil Key', 'Forged by Dorran from volcanic glass, frost iron, and a fragment resonant with the old seals. Ordinary tools cannot touch the Veil. This one can.', 'quest', '/assets/items/crystal_shard.png', null, 1, 0, '{}', '{}'),
-  ('frost_iron', 'Frost Iron', 'A metal that only forms in air cold enough to kill. It stays cold long after leaving the mountain.', 'material', '/assets/items/iron_ore.png', null, 99, 3, '{}', '{}'),
+  ('ancient_seal', 'Ancient Seal', 'A disc of dark, water-worn stone pulled from beneath Magic Lake. It hums faintly, out of rhythm with everything else you''ve found. You don''t yet know what it does.', 'quest', '/assets/items/ancient_seal.png', null, 1, 0, '{}', '{}'),
+  ('second_seal', 'The Second Seal', 'Recovered from a sealed chamber deep in the Frost Mountains. The moment it left its chamber, the drain on the world''s magic grew worse, not better.', 'quest', '/assets/items/second_seal.png', null, 1, 0, '{}', '{}'),
+  ('third_seal', 'The Third Seal', 'Recovered from the ruins deep within the volcano. Someone else had been there recently — and left in a hurry.', 'quest', '/assets/items/third_seal.png', null, 1, 0, '{}', '{}'),
+  ('veil_key', 'The Veil Key', 'Forged by Dorran from volcanic glass, frost iron, and a fragment resonant with the old seals. Ordinary tools cannot touch the Veil. This one can.', 'quest', '/assets/items/veil_key.png', null, 1, 0, '{}', '{}'),
+  ('frost_iron', 'Frost Iron', 'A metal that only forms in air cold enough to kill. It stays cold long after leaving the mountain.', 'material', '/assets/items/rare_metal.png', null, 99, 3, '{}', '{}'),
   ('glacier_moss', 'Glacier Moss', 'Pale moss that grows only in ice-locked dark, undisturbed for centuries.', 'material', '/assets/items/crystal_shard.png', null, 99, 2, '{}', '{}'),
-  ('volcanic_glass', 'Volcanic Glass', 'Black glass formed where the old forge''s heat met the mountain''s stone. Sharp enough to cut, if you''re careless.', 'material', '/assets/items/crystal_shard.png', null, 99, 3, '{}', '{}'),
-  ('resonant_fragment', 'Resonant Fragment', 'A sliver pried from the Ancient Ruins, still faintly attuned to the seals. Dorran says the forge will want this.', 'material', '/assets/items/crystal_shard.png', null, 99, 0, '{}', '{}')
+  ('volcanic_glass', 'Volcanic Glass', 'Black glass formed where the old forge''s heat met the mountain''s stone. Sharp enough to cut, if you''re careless.', 'material', '/assets/items/volcanic_material.png', null, 99, 3, '{}', '{}'),
+  ('resonant_fragment', 'Resonant Fragment', 'A sliver pried from the Ancient Ruins, still faintly attuned to the seals. Dorran says the forge will want this.', 'material', '/assets/items/ancient_forge_fragment.png', null, 99, 0, '{}', '{}')
 on conflict (id) do update set
   name = excluded.name, description = excluded.description, item_type = excluded.item_type,
   icon_image = excluded.icon_image, equip_slot = excluded.equip_slot, stack_max = excluded.stack_max,
@@ -711,19 +714,21 @@ insert into public.interactables (id, location_id, name, map_x, map_y, lines, gr
   ('castle_hidden_documents_1', 'castle', 'A Hidden Compartment',
    40, 42,
    array[
-     'Behind a loose stone, a bundle of private correspondence — recent, not archival. A name appears again and again, someone with standing enough to walk these halls freely.'
+     'Behind a loose stone, a bundle of private correspondence — recent, not archival. One signature closes every letter: Alden.',
+     'Tower business, you assume, at first. Then you read further.'
    ], null, 0),
   ('castle_hidden_documents_2', 'castle', 'A Second Hidden Document',
    70, 44,
    array[
-     'Research notes, meticulous and unmistakably modern, cataloguing everything the ancient civilization recorded about the Veil — and everything they refused to write down.'
+     'Research notes in a hand you recognize from the Magic Tower''s locked cabinet — Alden''s, unmistakably. Meticulous, cataloguing everything the ancient civilization recorded about the Veil, and everything they refused to write down.',
+     'The ink is barely a season dry. This isn''t old research. It''s ongoing.'
    ], null, 0),
   ('castle_antagonist_plan', 'castle', 'The Plan',
    52, 18,
    array[
-     'A single page, unsigned: a plan to weaken all three seals, one at a time, until the Veil can be opened outright.',
-     'The handwriting matches the correspondence. Whoever this is, they believe magic belongs to people, not behind a wall none of them chose.',
-     'You don''t know yet if they''re wrong.'
+     'A single page, unsigned this time — but the handwriting needs no signature anymore. A plan to weaken all three seals, one at a time, until the Veil can be opened outright.',
+     'In the margin, a second list, checked off in the same hand: the lake, the mountains, the volcano. Each one dated close behind the day you cleared it.',
+     'Alden believes magic belongs to people, not behind a wall none of them chose. You don''t know yet if he''s wrong. You do know he''s been keeping track of you like a tool he set down and picked back up.'
    ], null, 0),
 
   -- Frost Mountains (Quest 13)
@@ -1167,12 +1172,15 @@ on conflict (id) do update set
 -- =========================================================
 
 insert into public.interactables (id, location_id, name, map_x, map_y, lines, grants_item_id, grants_item_qty) values
-  ('castle_confrontation', 'castle', 'A Close Call',
+  ('castle_confrontation', 'castle', 'Alden, at Last',
    60, 70,
    array[
-     'Footsteps, unhurried, coming down the corridor toward the archive. You slip behind the shelves just in time.',
-     'Through the gap, you catch only a glimpse — someone with every right to be here, reading a letter with your handwriting''s mirror image of urgency.',
-     'You don''t risk staying to see more. You have enough. It''s time to go.'
+     'Footsteps in the corridor — unhurried, familiar. Alden steps into the archive light before you can decide whether to hide.',
+     '"You found it, then." He doesn''t look surprised. He looks almost relieved. "I wondered how long the missing pages would hold you off."',
+     'You ask him plainly if it was him. He doesn''t deny it. "I''ve spent longer than you''ve been alive trying to understand the Veil, and longer still trying to get anyone to listen. You listened. You simply didn''t know it was me you were listening to."',
+     '"The Veil doesn''t protect us. It starves us — cuts us off from what magic actually is, and calls the wound a kindness. I mean to open it properly. Carefully. Not tear it down. But I needed seals recovered, guardians cleared, ground mapped that I couldn''t reach myself. I needed someone the kingdom would trust. So I let you find everything, one piece at a time, and I made sure you never had reason to look for me behind it."',
+     'It lands like a second betrayal stacked on the first: every seal you carried out of danger, every guardian you fought, you carried for him.',
+     '"I am sorry it has to be this way." He almost sounds like he means it. He lifts the plan from the table before you can stop him, and by the time you round the shelf, the corridor is empty.'
    ], null, 0),
   ('village_open_passage', 'village', 'The Passage Opens',
    64, 58,
@@ -1264,9 +1272,9 @@ insert into public.quest_objectives (quest_id, order_index, objective_type, targ
   ('the_betrayal', 1, 'talk_to_npc', 'elira', 1, 'Speak with Elira in the village.'),
   ('the_betrayal', 2, 'enter_location', 'castle', 1, 'Return to the Castle.'),
   ('the_betrayal', 3, 'interact', 'castle_hidden_documents_1', 1, 'Investigate the archive for hidden documents.'),
-  ('the_betrayal', 4, 'interact', 'castle_hidden_documents_2', 1, 'Discover the antagonist''s research.'),
-  ('the_betrayal', 5, 'interact', 'castle_antagonist_plan', 1, 'Discover the plan to weaken the Veil.'),
-  ('the_betrayal', 6, 'interact', 'castle_confrontation', 1, 'Avoid being discovered and get out.'),
+  ('the_betrayal', 4, 'interact', 'castle_hidden_documents_2', 1, 'Discover the extent of Alden''s research.'),
+  ('the_betrayal', 5, 'interact', 'castle_antagonist_plan', 1, 'Uncover the plan to weaken the Veil.'),
+  ('the_betrayal', 6, 'interact', 'castle_confrontation', 1, 'Confront Alden.'),
 
   ('the_hollow', 1, 'talk_to_npc', 'elira', 1, 'Speak with Elira in the village.'),
   ('the_hollow', 2, 'interact', 'village_three_seals_altar', 1, 'Examine the three seals together.'),
@@ -1299,9 +1307,10 @@ insert into public.npc_dialogues (id, npc_id, quest_id, state, lines, response_l
    ], 'Turn in: The Betrayal'),
   ('elira_the_betrayal_done', 'elira', 'the_betrayal', 'quest_done',
    array[
-     'Someone inside the kingdom. Someone with the standing to walk those halls and the patience to plan this for years.',
-     'Their notes don''t read like a monster''s. They read like someone who believes the Veil is a cage, and that magic belongs to people, not behind a wall none of us chose to build.',
-     'I want to tell you they''re simply wrong. I''m not sure I can, not honestly. But weakening three ancient seals without knowing what''s on the other side — that''s not an answer either. That''s just a different kind of reckless.'
+     'Alden. Of course it''s Alden — patient enough, clever enough, and the last person anyone would think to watch.',
+     'His notes don''t read like a monster''s. They read like someone who believes the Veil is a cage, and that magic belongs to people, not behind a wall none of us chose to build. I want to tell you he''s simply wrong. I''m not sure I can, not honestly.',
+     'But that doesn''t excuse what he did to you. Every seal you carried out of danger, every guardian you fought — he let you take those risks so he wouldn''t have to. You thought you were uncovering the truth. He was using you to uncover it for him.',
+     'You didn''t do anything wrong. None of us could have known. But we know now, and I''m not leaving your side again until this is finished — his way or ours.'
    ], 'Continue'),
 
   ('elira_the_hollow_offer', 'elira', 'the_hollow', 'quest_offer',

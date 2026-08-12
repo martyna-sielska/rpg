@@ -101,6 +101,11 @@ export function DialogueOverlay({
                   </>
                 )}
               </p>
+              {reward.rewardItemId && reward.rewardItemIcon && (
+                <div className="relative h-14 w-14 shrink-0 drop-shadow-[0_4px_6px_rgba(0,0,0,0.6)]">
+                  <Image src={reward.rewardItemIcon} alt="" fill sizes="56px" unoptimized className="object-contain" />
+                </div>
+              )}
               <Button
                 onClick={() => {
                   if (reward.leveledUp) {

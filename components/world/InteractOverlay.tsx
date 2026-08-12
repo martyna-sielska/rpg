@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Panel } from "@/components/ui/Panel";
 import { Button } from "@/components/ui/Button";
 import type { InteractResult } from "@/lib/actions/interactables";
@@ -47,9 +48,16 @@ export function InteractOverlay({
                 <p className="font-pixel text-sm text-gold">{name}</p>
                 <p className="mt-2 text-sm leading-relaxed text-parchment">{result.lines[lineIndex]}</p>
                 {result.grantedItemId && lineIndex === result.lines.length - 1 && (
-                  <p className="mt-2 text-xs font-semibold text-gold">
-                    +{result.grantedItemQty} {result.grantedItemId.replace(/_/g, " ")}
-                  </p>
+                  <div className="mt-2 flex items-center gap-2">
+                    {result.grantedItemIcon && (
+                      <div className="relative h-8 w-8 shrink-0 drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]">
+                        <Image src={result.grantedItemIcon} alt="" fill sizes="32px" unoptimized className="object-contain" />
+                      </div>
+                    )}
+                    <p className="text-xs font-semibold text-gold">
+                      +{result.grantedItemQty} {result.grantedItemId.replace(/_/g, " ")}
+                    </p>
+                  </div>
                 )}
               </div>
               <div className="flex items-center justify-between gap-2">

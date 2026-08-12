@@ -7,6 +7,7 @@ import { MonsterHotspot } from "@/components/combat/MonsterHotspot";
 import { CombatOverlay } from "@/components/combat/CombatOverlay";
 import { DayNightOverlay } from "@/components/world/DayNightOverlay";
 import { Interactable } from "@/components/world/Interactable";
+import { SceneFrame } from "@/components/world/SceneFrame";
 import type { GatheringNode, Interactable as InteractableType, Monster, Player } from "@/lib/game/types";
 
 // Hand-placed against assets/forest.png (crystal cluster + treasure chest
@@ -59,7 +60,7 @@ export function ForestScene({
   const [activeMonster, setActiveMonster] = useState<Monster | null>(null);
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden">
+    <SceneFrame>
       <Image src={backgroundImage} alt="Enchanted Forest" fill priority unoptimized className="object-cover" />
       <div className="absolute inset-0 bg-black/10" />
       <DayNightOverlay />
@@ -112,6 +113,6 @@ export function ForestScene({
           onClose={() => setActiveMonster(null)}
         />
       )}
-    </div>
+    </SceneFrame>
   );
 }

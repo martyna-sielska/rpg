@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { travelToLocation } from "@/lib/actions/world";
 import { Panel } from "@/components/ui/Panel";
+import { SceneFrame } from "@/components/world/SceneFrame";
 
 /**
  * Placeholder scene for a location that's unlocked but not yet built out
@@ -20,10 +21,10 @@ export async function LocationSceneStub({ locationId }: { locationId: string }) 
   if (!location) notFound();
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden">
+    <SceneFrame>
       <Image src={location.background_image} alt={location.name} fill priority unoptimized className="object-cover" />
       <div className="absolute inset-0 bg-black/40" />
-      <div className="relative flex min-h-screen flex-col items-center justify-center gap-4 p-6 pt-24 text-center">
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 p-6 text-center">
         <Panel className="max-w-md p-5">
           <h1 className="font-pixel text-lg text-gold">{location.name}</h1>
           <p className="mt-2 text-sm text-parchment">{location.description}</p>
@@ -35,6 +36,6 @@ export async function LocationSceneStub({ locationId }: { locationId: string }) 
           </Link>
         </Panel>
       </div>
-    </div>
+    </SceneFrame>
   );
 }

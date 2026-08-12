@@ -4,6 +4,7 @@ import { avatarById } from "@/lib/game/types";
 import { xpProgress } from "@/lib/game/xp";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { DayNightIndicator } from "@/components/world/DayNightIndicator";
+import { IntroHelpButton } from "@/components/intro/IntroHelpButton";
 import type { Player } from "@/lib/game/types";
 
 // Bust-crop vertical anchor per avatar, tuned per portrait since headwear height
@@ -92,8 +93,11 @@ export function GameHud({ player }: { player: Player }) {
             <Image src={link.icon} alt={link.label} fill sizes="40px" unoptimized className="object-contain" />
           </Link>
         ))}
-        <div className="ml-1 scale-90">
-          <LogoutButton />
+        <div className="flex items-center gap-0">
+          <IntroHelpButton />
+          <div className="scale-90">
+            <LogoutButton />
+          </div>
         </div>
       </div>
     </div>

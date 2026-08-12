@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { Interactable } from "@/components/world/Interactable";
 import { DayNightOverlay } from "@/components/world/DayNightOverlay";
+import { SceneFrame } from "@/components/world/SceneFrame";
 import type { Interactable as InteractableType } from "@/lib/game/types";
 
 // Hand-placed against assets/locations/ancient_ruins.png — covers the
@@ -15,6 +16,7 @@ const INTERACTABLE_POSITIONS: Record<string, { x: number; y: number }> = {
   ruins_inscription_2: { x: 44, y: 22 },
   ruins_inscription_3: { x: 68, y: 30 },
   ruins_temple: { x: 50, y: 58 },
+  ruins_elira_secret: { x: 45, y: 53 },
   ruins_veil_records: { x: 58, y: 68 },
   ruins_maintenance_evidence: { x: 32, y: 62 },
   ruins_sabotage_evidence: { x: 76, y: 52 },
@@ -32,7 +34,7 @@ export function AncientRuinsScene({
   interactables: InteractableType[];
 }) {
   return (
-    <div className="relative min-h-screen w-full overflow-hidden">
+    <SceneFrame>
       <Image src={backgroundImage} alt="Ancient Ruins" fill priority unoptimized className="object-cover" />
       <div className="absolute inset-0 bg-black/15" />
       <DayNightOverlay />
@@ -42,6 +44,6 @@ export function AncientRuinsScene({
         if (!pos) return null;
         return <Interactable key={obj.id} id={obj.id} name={obj.name} mapX={pos.x} mapY={pos.y} />;
       })}
-    </div>
+    </SceneFrame>
   );
 }
