@@ -29,7 +29,7 @@ const INTERACTABLE_POSITIONS: Record<string, { x: number; y: number }> = {
   volcano_recover_third_seal: { x: 82, y: 16 },
 };
 
-const BOSS_POSITION = { x: 82, y: 14 };
+const BOSS_POSITION = { x: 82, y: 20 };
 
 export function VolcanoScene({
   backgroundImage,
