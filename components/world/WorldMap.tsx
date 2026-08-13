@@ -43,7 +43,7 @@ const HOTSPOT_RECTS: Record<string, { left: number; top: number; width: number; 
   dungeon_ruins: { left: 49.5, top: 2.9, width: 15.0, height: 18.6 },
   lake: { left: 45.6, top: 45.4, width: 20.2, height: 18.6 },
   castle: { left: 50.8, top: 22.0, width: 26.0, height: 23.0 },
-  mountains: { left: 78.1, top: 0, width: 21.9, height: 14.2 },
+  mountains: { left: 85.0, top: 6.0, width: 15.0, height: 18.0 },
   volcano: { left: 82.7, top: 28.3, width: 17.3, height: 30.3 },
   magic_tower: { left: 2.6, top: 0, width: 11.1, height: 29.3 },
   ancient_ruins: { left: 77.5, top: 14.2, width: 15.0, height: 13.7 },
