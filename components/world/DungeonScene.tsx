@@ -28,6 +28,7 @@ export function DungeonScene({
   boss,
   minibossDefeated,
   bossDefeated,
+  bossQuestActive,
   player,
   avatarImage,
   weaponBonus,
@@ -39,6 +40,14 @@ export function DungeonScene({
   boss: Monster | null;
   minibossDefeated: boolean;
   bossDefeated: boolean;
+  // Whether "The Ancient Gate" (the quest that introduces fading_shadow) is
+  // currently the player's active/ready-to-turn-in quest — see the matching
+  // note in VolcanoScene/MountainsScene for why this gate exists:
+  // defeat_monster only progresses objectives of the player's currently
+  // *active* quests, and a defeated boss's hotspot never comes back, so
+  // beating it before the quest is active would permanently unwinnable that
+  // objective.
+  bossQuestActive: boolean;
   player: Player;
   avatarImage: string;
   weaponBonus: number;
@@ -70,7 +79,7 @@ export function DungeonScene({
         />
       )}
 
-      {boss && !bossDefeated && minibossDefeated && (
+      {boss && !bossDefeated && minibossDefeated && bossQuestActive && (
         <MonsterHotspot
           id={boss.id}
           name={boss.name}
@@ -85,6 +94,12 @@ export function DungeonScene({
       {boss && !bossDefeated && !minibossDefeated && (
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2">
           <Panel className="px-4 py-2 text-center text-xs text-parchment-dark">{t.dungeon.minibossBlocking}</Panel>
+        </div>
+      )}
+
+      {boss && !bossDefeated && minibossDefeated && !bossQuestActive && (
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2">
+          <Panel className="px-4 py-2 text-center text-xs text-parchment-dark">{t.dungeon.bossLocked}</Panel>
         </div>
       )}
 

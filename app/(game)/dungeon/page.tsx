@@ -21,15 +21,23 @@ export default async function DungeonPage() {
   const supabase = await createClient();
   const locale = await getLocale();
 
-  const [{ data: location }, { data: monsters }, { data: bossState }, { data: interactables }, { data: equipment }, { data: potionRow }] =
-    await Promise.all([
-      supabase.from("locations").select("*").eq("id", "dungeon_ruins").single(),
-      supabase.from("monsters").select("*").eq("location_id", "dungeon_ruins").in("tier", ["miniboss", "boss"]),
-      supabase.from("player_boss_state").select("*").eq("player_id", player.id),
-      supabase.rpc("get_visible_interactables", { p_location_id: "dungeon_ruins" }),
-      supabase.from("player_equipment").select("*").eq("player_id", player.id).maybeSingle(),
-      supabase.from("player_inventory").select("quantity").eq("player_id", player.id).eq("item_id", "healing_potion").maybeSingle(),
-    ]);
+  const [
+    { data: location },
+    { data: monsters },
+    { data: bossState },
+    { data: interactables },
+    { data: ancientGateQuest },
+    { data: equipment },
+    { data: potionRow },
+  ] = await Promise.all([
+    supabase.from("locations").select("*").eq("id", "dungeon_ruins").single(),
+    supabase.from("monsters").select("*").eq("location_id", "dungeon_ruins").in("tier", ["miniboss", "boss"]),
+    supabase.from("player_boss_state").select("*").eq("player_id", player.id),
+    supabase.rpc("get_visible_interactables", { p_location_id: "dungeon_ruins" }),
+    supabase.from("player_quests").select("status").eq("player_id", player.id).eq("quest_id", "the_ancient_gate").maybeSingle(),
+    supabase.from("player_equipment").select("*").eq("player_id", player.id).maybeSingle(),
+    supabase.from("player_inventory").select("quantity").eq("player_id", player.id).eq("item_id", "healing_potion").maybeSingle(),
+  ]);
 
   let weaponBonus = 0;
   if (equipment?.weapon_item_id) {
@@ -41,6 +49,7 @@ export default async function DungeonPage() {
   const boss = monsters?.find((m) => m.tier === "boss");
   const minibossDefeated = bossState?.some((s) => s.monster_id === miniboss?.id && s.defeated) ?? false;
   const bossDefeated = bossState?.some((s) => s.monster_id === boss?.id && s.defeated) ?? false;
+  const bossQuestActive = ancientGateQuest?.status === "active" || ancientGateQuest?.status === "ready_to_turn_in";
 
   return (
     <DungeonScene
@@ -50,6 +59,7 @@ export default async function DungeonPage() {
       boss={boss ? localize(boss, locale, ["name", "description"]) : null}
       minibossDefeated={minibossDefeated}
       bossDefeated={bossDefeated}
+      bossQuestActive={bossQuestActive}
       player={player}
       avatarImage={avatarById(player.avatar_id).image}
       weaponBonus={weaponBonus}

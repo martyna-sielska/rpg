@@ -186,6 +186,7 @@ export const pl: Dictionary = {
   },
   dungeon: {
     minibossBlocking: "Coś głębiej w ruinach się porusza — ale Cierniowy Strażnik blokuje drogę.",
+    bossLocked: "Skażony Strażnik pozostaje uśpiony w komnacie run. Coś innego musi się najpierw wydarzyć, by się przebudził.",
     cleared: "W ruinach zapadła cisza. To miejsce zostało oczyszczone — przynajmniej na razie.",
   },
 

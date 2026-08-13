@@ -184,6 +184,7 @@ export const en = {
   },
   dungeon: {
     minibossBlocking: "Something deeper in the ruins stirs — but the Bramble Warden blocks the way.",
+    bossLocked: "The Corrupted Guardian lies dormant in the rune-circle room. Something else must happen before it wakes.",
     cleared: "The ruins have gone quiet. You've cleared this place — for now.",
   },
 
