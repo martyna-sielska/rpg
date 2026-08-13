@@ -26,10 +26,10 @@ const INTERACTABLE_POSITIONS: Record<string, { x: number; y: number }> = {
   mountains_chamber_entrance: { x: 90, y: 35 },
   mountains_puzzle_rune_1: { x: 86, y: 43 },
   mountains_puzzle_rune_2: { x: 93, y: 47 },
-  mountains_recover_second_seal: { x: 88, y: 49 },
+  mountains_recover_second_seal: { x: 86, y: 64 },
 };
 
-const BOSS_POSITION = { x: 88, y: 49 };
+const BOSS_POSITION = { x: 86, y: 64 };
 
 export function MountainsScene({
   backgroundImage,
