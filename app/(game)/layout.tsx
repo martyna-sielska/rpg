@@ -10,7 +10,7 @@ export default async function GameLayout({ children }: { children: ReactNode }) 
     <div className="relative min-h-screen bg-wood-darkest">
       <GameHud player={player} />
       <main className="min-h-screen">{children}</main>
-      <IntroModal />
+      <IntroModal autoOpen={!player.intro_seen} />
     </div>
   );
 }

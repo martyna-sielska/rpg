@@ -1,21 +1,16 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { Panel } from "@/components/ui/Panel";
 import { Button } from "@/components/ui/Button";
 import { useI18n } from "@/lib/i18n/I18nProvider";
-
-// Bumping this key (rather than reusing an old one) is how we'd force the
-// intro to show again for existing players if its content changes meaningfully.
-const STORAGE_KEY = "wonderhill:intro-seen:v1";
+import { markIntroSeen } from "@/lib/actions/player";
 
 // Module-level store (mirrors the useSyncExternalStore pattern in
-// lib/game/useDayPhase.ts) rather than useState+useEffect, so opening the
-// intro on first visit is a plain external-system sync — not a setState
-// call inside an effect — and the same store lets the HUD's "?" button
-// reopen it from a completely different component subtree.
+// lib/game/useDayPhase.ts) rather than useState+useEffect, so the "?" HUD
+// button (a completely different component subtree) can reopen the modal
+// just by calling openIntro().
 let open = false;
-let seenChecked = false;
 const listeners = new Set<() => void>();
 
 function notify() {
@@ -23,13 +18,6 @@ function notify() {
 }
 
 function subscribe(callback: () => void) {
-  if (!seenChecked) {
-    seenChecked = true;
-    if (!window.localStorage.getItem(STORAGE_KEY)) {
-      open = true;
-      window.localStorage.setItem(STORAGE_KEY, "1");
-    }
-  }
   listeners.add(callback);
   return () => listeners.delete(callback);
 }
@@ -50,11 +38,23 @@ export function openIntro() {
 function closeIntro() {
   open = false;
   notify();
+  void markIntroSeen();
 }
 
-export function IntroModal() {
+// "Seen" lives on the player row (players.intro_seen), not localStorage, so
+// a brand-new account is shown the intro exactly once no matter which
+// browser/device they first log in from, and it never resurfaces for that
+// account once dismissed.
+export function IntroModal({ autoOpen }: { autoOpen: boolean }) {
   const isOpen = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
   const { t } = useI18n();
+
+  useEffect(() => {
+    if (autoOpen) openIntro();
+    // Only the mount-time value matters — this fires once per GameLayout
+    // mount, i.e. once per login session, not on every player prop refresh.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (!isOpen) return null;
 

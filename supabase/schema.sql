@@ -217,7 +217,10 @@ create table public.players (
   vitality integer not null default 5,
   luck integer not null default 5,
   current_location_id text not null default 'home' references public.locations (id),
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  -- Per-account (not per-browser) flag for the welcome/how-to-play modal —
+  -- see patch-012-intro-seen.sql.
+  intro_seen boolean not null default false
 );
 
 -- Equipment pieces are plain item references, not unique item instances

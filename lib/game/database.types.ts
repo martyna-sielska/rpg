@@ -236,6 +236,7 @@ export interface Database {
           luck: number;
           current_location_id: string;
           created_at: string;
+          intro_seen: boolean;
         };
         Insert: Partial<Database["public"]["Tables"]["players"]["Row"]> & { id: string };
         Update: Partial<Database["public"]["Tables"]["players"]["Row"]>;

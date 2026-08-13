@@ -31,3 +31,13 @@ export async function updateAvatar(avatarId: AvatarId): Promise<UpdateAvatarResu
   revalidatePath("/world-map");
   return {};
 }
+
+export async function markIntroSeen(): Promise<void> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return;
+
+  await supabase.from("players").update({ intro_seen: true }).eq("id", user.id);
+}
