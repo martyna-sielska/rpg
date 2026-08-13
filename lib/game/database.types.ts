@@ -424,6 +424,10 @@ export interface Database {
           out_granted_item_qty: number;
         }[];
       };
+      get_visible_interactables: {
+        Args: { p_location_id: string };
+        Returns: Database["public"]["Tables"]["interactables"]["Row"][];
+      };
       craft_item: {
         Args: { p_recipe_id: string };
         Returns: { out_item_id: string; out_quantity: number }[];

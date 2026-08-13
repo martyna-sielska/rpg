@@ -18,7 +18,7 @@ export default async function HollowPage() {
   const locale = await getLocale();
   const [{ data: location }, { data: interactables }] = await Promise.all([
     supabase.from("locations").select("*").eq("id", "hollow").single(),
-    supabase.from("interactables").select("*").eq("location_id", "hollow"),
+    supabase.rpc("get_visible_interactables", { p_location_id: "hollow" }),
   ]);
 
   return (

@@ -19,7 +19,7 @@ export default async function VillagePage() {
   const [{ data: location }, { data: npcs }, { data: interactables }] = await Promise.all([
     supabase.from("locations").select("*").eq("id", "village").single(),
     supabase.from("npcs").select("*").eq("location_id", "village").order("sort_order"),
-    supabase.from("interactables").select("*").eq("location_id", "village"),
+    supabase.rpc("get_visible_interactables", { p_location_id: "village" }),
   ]);
 
   return (

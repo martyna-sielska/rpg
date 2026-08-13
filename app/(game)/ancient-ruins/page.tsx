@@ -18,7 +18,7 @@ export default async function AncientRuinsPage() {
   const locale = await getLocale();
   const [{ data: location }, { data: interactables }] = await Promise.all([
     supabase.from("locations").select("*").eq("id", "ancient_ruins").single(),
-    supabase.from("interactables").select("*").eq("location_id", "ancient_ruins"),
+    supabase.rpc("get_visible_interactables", { p_location_id: "ancient_ruins" }),
   ]);
 
   return (

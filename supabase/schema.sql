@@ -935,7 +935,7 @@ grant execute on function public.gather_node(text) to authenticated;
 -- =========================================================
 
 create or replace function public.interact_with_object(p_id text)
-returns table (out_lines text[], out_granted_item_id text, out_granted_item_qty integer)
+returns table (out_lines text[], out_lines_pl text[], out_granted_item_id text, out_granted_item_qty integer)
 language plpgsql
 set search_path = public
 as $$
@@ -953,6 +953,23 @@ begin
   select * into v_obj from public.interactables where id = p_id;
   if not found then
     raise exception 'Nothing to investigate here';
+  end if;
+
+  -- Objects tied to a quest_objectives row only become investigable once
+  -- the player has started (not necessarily finished) the owning quest —
+  -- otherwise both the flavor lines and any grants_item_id would leak
+  -- story beats and items ahead of the quest that's meant to unlock them.
+  if exists (
+    select 1 from public.quest_objectives qo
+    where qo.objective_type = 'interact' and qo.target_id = p_id
+  ) and not exists (
+    select 1
+    from public.quest_objectives qo
+    join public.player_quests pq
+      on pq.quest_id = qo.quest_id and pq.player_id = v_player_id
+    where qo.objective_type = 'interact' and qo.target_id = p_id
+  ) then
+    raise exception 'Nothing to investigate here yet';
   end if;
 
   select exists (
@@ -977,9 +994,43 @@ begin
 
   perform public.record_quest_event('interact', p_id);
 
-  return query select v_obj.lines, v_granted_item, v_granted_qty;
+  return query select v_obj.lines, v_obj.lines_pl, v_granted_item, v_granted_qty;
 end;
 $$;
+
+-- =========================================================
+-- get_visible_interactables: the interactables a player should currently
+-- see on a location's map. Mirrors the gate in interact_with_object above
+-- (started the owning quest, or ungated) so the map never shows a hotspot
+-- the player couldn't actually investigate yet.
+-- =========================================================
+
+create or replace function public.get_visible_interactables(p_location_id text)
+returns setof public.interactables
+language sql
+stable
+set search_path = public
+as $$
+  select i.*
+  from public.interactables i
+  where i.location_id = p_location_id
+    and (
+      not exists (
+        select 1 from public.quest_objectives qo
+        where qo.objective_type = 'interact' and qo.target_id = i.id
+      )
+      or exists (
+        select 1
+        from public.quest_objectives qo
+        join public.player_quests pq
+          on pq.quest_id = qo.quest_id and pq.player_id = auth.uid()
+        where qo.objective_type = 'interact' and qo.target_id = i.id
+      )
+    );
+$$;
+
+revoke execute on function public.get_visible_interactables(text) from public;
+grant execute on function public.get_visible_interactables(text) to authenticated;
 
 revoke execute on function public.interact_with_object(text) from public;
 grant execute on function public.interact_with_object(text) to authenticated;

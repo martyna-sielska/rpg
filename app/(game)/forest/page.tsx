@@ -27,7 +27,7 @@ export default async function ForestPage() {
       supabase.from("gathering_nodes").select("*").eq("location_id", "forest"),
       supabase.from("items").select("id, icon_image"),
       supabase.from("monsters").select("*").eq("location_id", "forest").eq("tier", "regular"),
-      supabase.from("interactables").select("*").eq("location_id", "forest"),
+      supabase.rpc("get_visible_interactables", { p_location_id: "forest" }),
       supabase.from("player_equipment").select("*").eq("player_id", player.id).maybeSingle(),
       supabase.from("player_inventory").select("quantity").eq("player_id", player.id).eq("item_id", "healing_potion").maybeSingle(),
     ]);

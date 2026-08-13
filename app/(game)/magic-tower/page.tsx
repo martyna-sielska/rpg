@@ -19,7 +19,7 @@ export default async function MagicTowerPage() {
   const [{ data: location }, { data: scholar }, { data: interactables }] = await Promise.all([
     supabase.from("locations").select("*").eq("id", "magic_tower").single(),
     supabase.from("npcs").select("*").eq("id", "scholar_alden").maybeSingle(),
-    supabase.from("interactables").select("*").eq("location_id", "magic_tower"),
+    supabase.rpc("get_visible_interactables", { p_location_id: "magic_tower" }),
   ]);
 
   return (

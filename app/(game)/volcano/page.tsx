@@ -36,7 +36,7 @@ export default async function VolcanoPage() {
     supabase.from("locations").select("*").eq("id", "volcano").single(),
     supabase.from("gathering_nodes").select("*").eq("location_id", "volcano"),
     supabase.from("items").select("id, icon_image"),
-    supabase.from("interactables").select("*").eq("location_id", "volcano"),
+    supabase.rpc("get_visible_interactables", { p_location_id: "volcano" }),
     supabase.from("monsters").select("*").eq("location_id", "volcano").eq("tier", "boss"),
     supabase.from("player_boss_state").select("*").eq("player_id", player.id),
     supabase.from("player_interactions").select("interactable_id").eq("player_id", player.id).eq("interactable_id", "volcano_seal_chamber"),

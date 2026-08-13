@@ -36,7 +36,7 @@ export default async function MountainsPage() {
     supabase.from("locations").select("*").eq("id", "mountains").single(),
     supabase.from("gathering_nodes").select("*").eq("location_id", "mountains"),
     supabase.from("items").select("id, icon_image"),
-    supabase.from("interactables").select("*").eq("location_id", "mountains"),
+    supabase.rpc("get_visible_interactables", { p_location_id: "mountains" }),
     supabase.from("monsters").select("*").eq("location_id", "mountains").eq("tier", "boss"),
     supabase.from("player_boss_state").select("*").eq("player_id", player.id),
     supabase.from("player_interactions").select("interactable_id").eq("player_id", player.id).eq("interactable_id", "mountains_puzzle_rune_2"),

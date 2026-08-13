@@ -18,7 +18,7 @@ export default async function LakePage() {
   const locale = await getLocale();
   const [{ data: location }, { data: interactables }] = await Promise.all([
     supabase.from("locations").select("*").eq("id", "lake").single(),
-    supabase.from("interactables").select("*").eq("location_id", "lake"),
+    supabase.rpc("get_visible_interactables", { p_location_id: "lake" }),
   ]);
 
   return (
