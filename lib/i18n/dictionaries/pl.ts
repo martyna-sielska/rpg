@@ -146,6 +146,7 @@ export const pl: Dictionary = {
     questComplete: "Zadanie ukończone!",
     earnedRewards: "Zdobywasz złoto i doświadczenie.",
     received: (qty, item) => `Otrzymujesz ${qty}× ${item}.`,
+    newQuest: "Nowe zadanie!",
   },
 
   interact: {

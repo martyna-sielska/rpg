@@ -144,6 +144,7 @@ export const en = {
     questComplete: "Quest Complete!",
     earnedRewards: "You earned gold and experience.",
     received: (qty: number, item: string) => `You received ${qty}× ${item}.`,
+    newQuest: "New Quest!",
   },
 
   interact: {

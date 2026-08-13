@@ -34,6 +34,7 @@ export function DialogueOverlay({
   const [error, setError] = useState<string | null>(null);
   const [reward, setReward] = useState<QuestTurnInResult | null>(null);
   const [levelUpTo, setLevelUpTo] = useState<number | null>(null);
+  const [newQuest, setNewQuest] = useState<{ title: string; description: string } | null>(null);
 
   useEffect(() => {
     startTransition(async () => {
@@ -74,6 +75,11 @@ export function DialogueOverlay({
           setError(e instanceof Error ? e.message : t.dialogue.turnInError);
         }
       });
+      return;
+    }
+
+    if (result.state === "quest_offer" && result.questTitle) {
+      setNewQuest({ title: result.questTitle, description: result.questDescription ?? "" });
       return;
     }
 
@@ -122,11 +128,24 @@ export function DialogueOverlay({
             </div>
           )}
 
-          {!error && !reward && !result && (
+          {!error && !reward && newQuest && (
+            <div className="flex flex-col items-center gap-2 text-center">
+              <p className="font-pixel text-base text-gold">{t.dialogue.newQuest}</p>
+              <p className="font-pixel text-sm text-parchment">{newQuest.title}</p>
+              {newQuest.description && (
+                <p className="text-sm leading-relaxed text-parchment">{newQuest.description}</p>
+              )}
+              <Button className="mt-2" onClick={handleClose}>
+                {t.common.continue}
+              </Button>
+            </div>
+          )}
+
+          {!error && !reward && !newQuest && !result && (
             <p className="text-sm text-parchment-dark">...</p>
           )}
 
-          {!error && !reward && result && (
+          {!error && !reward && !newQuest && result && (
             <div className="flex flex-col gap-4">
               <div className="flex items-start gap-4">
                 <div className="relative h-20 w-16 shrink-0 overflow-hidden rounded-md border-2 border-wood-dark sm:h-24 sm:w-20">
