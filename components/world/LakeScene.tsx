@@ -11,8 +11,8 @@ import type { Interactable as InteractableType } from "@/lib/game/types";
 // seeded for each row in supabase/seed.sql's interactables insert, same
 // convention as ForestScene's INTERACTABLE_POSITIONS.
 const INTERACTABLE_POSITIONS: Record<string, { x: number; y: number }> = {
-  lake_dock: { x: 30, y: 68 },
-  lake_strange_lights: { x: 62, y: 38 },
+  lake_dock: { x: 30, y: 74 },
+  lake_strange_lights: { x: 44, y: 60 },
   lake_boat: { x: 48, y: 78 },
   lake_underwater_evidence: { x: 40, y: 52 },
   lake_submerged_structure: { x: 72, y: 40 },
