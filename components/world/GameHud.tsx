@@ -1,6 +1,6 @@
 import Image from "next/image";
-import Link from "next/link";
 import { avatarById } from "@/lib/game/types";
+import { HudNavLinks } from "@/components/world/HudNavLinks";
 import { xpProgress } from "@/lib/game/xp";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { DayNightIndicator } from "@/components/world/DayNightIndicator";
@@ -87,17 +87,7 @@ export async function GameHud({ player }: { player: Player }) {
       </div>
 
       <div className="pointer-events-auto flex items-center gap-1 rounded-xl border-4 border-wood-dark bg-wood/95 p-1.5 shadow-[0_8px_24px_rgba(0,0,0,0.5)]">
-        {navLinks.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            title={link.label}
-            aria-label={link.label}
-            className="relative flex h-10 w-10 items-center justify-center rounded-lg transition hover:scale-110 hover:brightness-110"
-          >
-            <Image src={link.icon} alt={link.label} fill sizes="40px" unoptimized className="object-contain" />
-          </Link>
-        ))}
+        <HudNavLinks links={navLinks} />
         <div className="flex items-center gap-1">
           <div className="scale-90">
             <LanguageSwitcher />
